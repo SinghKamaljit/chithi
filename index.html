@@ -744,6 +744,24 @@
 <!-- ══════════════════════════════════════════
      FIREBASE + APP LOGIC
 ══════════════════════════════════════════ -->
+<!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
+<script>
+  const CACHE_VERSION = "chithi-v1"; // ← bump this (e.g. v2, v3) each time you edit index.html
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      regs.forEach(r => r.unregister());
+    });
+  }
+  // Clear all caches matching old versions
+  if ('caches' in window) {
+    caches.keys().then(keys => {
+      keys.forEach(key => {
+        if (key !== CACHE_VERSION) caches.delete(key);
+      });
+    });
+  }
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -769,7 +787,7 @@ const FIREBASE_CONFIG = {
 // UID of the owner/admin (Kamaljit) — update after first login if needed
 // To find yours: after logging in open browser console and type: firebase.auth().currentUser.uid
 // Or just set your email here and we'll match by email
-const OWNER_EMAIL = "singhkamaljit@youremail.com"; // ← UPDATE THIS
+const OWNER_EMAIL = "kamal310i@gmail.com";
 
 const MAX_SLOTS    = 10;
 const MAX_LETTERS  = 10;   // per contact pair
@@ -994,7 +1012,7 @@ function friendlyAuthError(code) {
     "auth/wrong-password":     "Wrong password.",
     "auth/too-many-requests":  "Too many attempts. Try later.",
     "auth/invalid-credential": "Wrong email or password."
-  }[code] || "Sign-in failed. Try again.";
+  }[code] || `Sign-in failed (${code})`;
 }
 
 // ─────────────────────────────────────────────
