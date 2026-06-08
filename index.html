@@ -1039,6 +1039,7 @@ function profileRef(uid) { return ref(db, `chithi/users/${uid}/profile`); }
 function slotsRef(uid)   { return ref(db, `chithi/users/${uid}/slots`); }
 function slotRef(uid, i) { return ref(db, `chithi/users/${uid}/slots/${i}`); }
 function lettersRef(uid1, uid2) { return ref(db, `chithi/letters/${pairKey(uid1, uid2)}`); }
+function codeIndexRef(code) { return ref(db, `chithi/codes/${code}`); }
 
 async function getProfile(uid) {
   const snap = await get(profileRef(uid));
@@ -1054,17 +1055,14 @@ async function getMySlots() {
 }
 
 async function findCodeOwner(code) {
-  // scan all users for matching code
-  const snap = await get(ref(db, "chithi/users"));
-  if (!snap.exists()) return null;
-  let found = null;
-  snap.forEach(child => {
-    const p = child.val().profile;
-    if (p && p.code === code.toUpperCase().trim()) {
-      found = { uid: child.key, ...p };
-    }
-  });
-  return found;
+  // look up public code index — single fast read, no permission issues
+  const cleanCode = code.toUpperCase().trim();
+  const uidSnap = await get(codeIndexRef(cleanCode));
+  if (!uidSnap.exists()) return null;
+  const uid = uidSnap.val();
+  const profile = await getProfile(uid);
+  if (!profile) return null;
+  return { uid, ...profile };
 }
 
 // ─────────────────────────────────────────────
@@ -1093,6 +1091,7 @@ onAuthStateChanged(auth, async user => {
       createdAt:   Date.now()
     };
     await set(profileRef(user.uid), profile);
+    await set(codeIndexRef(profile.code), user.uid); // public code → uid index
   }
   ME = { uid: user.uid, email: user.email, ...profile };
   myCodeDisplay.textContent = ME.code;
@@ -1134,6 +1133,7 @@ document.getElementById("show-signin").addEventListener("click", () => {
 // ─────────────────────────────────────────────
 signupBtn.addEventListener("click", async () => {
   signupError.textContent = "";
+  signupError.style.color = "";
   const email  = signupEmail.value.trim();
   const pass   = signupPass.value;
   const name   = signupName.value.trim();
@@ -1145,12 +1145,16 @@ signupBtn.addEventListener("click", async () => {
   if (invite !== INVITE_CODE) { signupError.textContent = "Invite code is incorrect."; return; }
 
   signupBtn.disabled = true; signupBtn.textContent = "Creating…";
+  // Set name BEFORE createUser to avoid race condition with onAuthStateChanged
+  window.__pendingDisplayName = name;
   try {
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    // Profile will be created in onAuthStateChanged — inject name via NAME_MAP fallback
-    // We temporarily store name so onAuthStateChanged can use it
-    window.__pendingDisplayName = name;
+    await createUserWithEmailAndPassword(auth, email, pass);
+    // onAuthStateChanged fires next — profile created, then app screen loads
+    signupError.style.color = "var(--success, #2e7d32)";
+    signupError.textContent = "Account created! Welcome to Chithi 🎉";
   } catch(e) {
+    window.__pendingDisplayName = null;
+    signupError.style.color = "";
     signupError.textContent = friendlySignupError(e.code);
     signupBtn.disabled = false; signupBtn.textContent = "Create Account";
   }
