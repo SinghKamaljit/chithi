@@ -775,13 +775,13 @@ import {
 // CONFIG
 // ─────────────────────────────────────────────
 const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyBOdLnMFLCkFJR3vDl5rOMECaArXGdimHE",
+  apiKey:            "AIzaSyA-0vMPlVK8Qrhhai93ZODqY7M_lpVh67Y",
   authDomain:        "dakiya-app-570ad.firebaseapp.com",
   databaseURL:       "https://dakiya-app-570ad-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId:         "dakiya-app-570ad",
-  storageBucket:     "dakiya-app-570ad.appspot.com",
-  messagingSenderId: "867430820537",
-  appId:             "1:867430820537:web:b7f58fba82d5e4e7b8c0c1"
+  storageBucket:     "dakiya-app-570ad.firebasestorage.app",
+  messagingSenderId: "35477393410",
+  appId:             "1:35477393410:web:a1c5aba77a7507fbf8571b"
 };
 
 // UID of the owner/admin (Kamaljit) — update after first login if needed
@@ -996,7 +996,7 @@ loginBtn.addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(auth, email, pass);
   } catch (e) {
-    authError.textContent = e.code + ": " + e.message;
+    authError.textContent = friendlyAuthError(e.code);
     loginBtn.disabled = false; loginBtn.textContent = "Sign In";
   }
 });
