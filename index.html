@@ -976,10 +976,15 @@ onAuthStateChanged(auth, async user => {
   let profile = await getProfile(user.uid);
   if (!profile) {
     // first login — create profile
-    const name = user.displayName || user.email.split("@")[0];
-    profile = {
-      code:        generateCode(name),
-      displayName: name,
+    // Hardcoded names by email since Firebase console mobile can't edit display names
+    const NAME_MAP = {
+      "kamal310i@gmail.com":  "Kamaljit Singh",
+      "ksgill310i@gmail.com": "KS Gill"
+    };
+    const rawName = NAME_MAP[user.email] || user.displayName || "User";
+    const profile = {
+      code:        generateCode(rawName),
+      displayName: rawName,
       email:       user.email,
       createdAt:   Date.now()
     };
