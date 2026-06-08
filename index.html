@@ -1086,7 +1086,7 @@ onAuthStateChanged(auth, async user => {
     };
     const rawName = NAME_MAP[user.email] || window.__pendingDisplayName || user.displayName || "User";
     window.__pendingDisplayName = null;
-    const profile = {
+    profile = {
       code:        generateCode(rawName),
       displayName: rawName,
       email:       user.email,
@@ -1264,7 +1264,7 @@ addContactBtn.addEventListener("click", async () => {
     showToast(`${label} added to slot ${emptyIdx + 1} ✅`);
     renderSlots();
   } catch (e) {
-    addError.textContent = "Failed. Try again.";
+    addError.textContent = "Failed: " + (e.message || e.code || "unknown error");
   }
 
   addContactBtn.disabled = false; addContactBtn.textContent = "Add Contact";
