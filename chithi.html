@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>ਚਿੱਠੀ · Chithi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink:     #1a1208;
+      --paper:   #f7f0e6;
+      --sepia:   #c8a96e;
+      --rust:    #b5541a;
+      --cream:   #fffdf7;
+      --muted:   #8a7560;
+      --border:  #e2d5be;
+      --unread:  #b5541a;
+      --safe:    #3a7a4a;
+      --warn:    #c47a10;
+      --card-sh: 0 2px 16px rgba(26,18,8,0.09);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ════════════════════════════════════════
+       SCREENS
+    ════════════════════════════════════════ */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ════════════════════════════════════════
+       AUTH SCREEN
+    ════════════════════════════════════════ */
+    #screen-auth {
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      background: var(--cream);
+    }
+
+    .auth-brand {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .auth-brand .gurmukhi {
+      font-size: 2.8rem;
+      color: var(--rust);
+      letter-spacing: 0.02em;
+      line-height: 1;
+      display: block;
+    }
+
+    .auth-brand .roman {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+      display: block;
+    }
+
+    .auth-brand .tagline {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.6rem;
+      letter-spacing: 0.04em;
+    }
+
+    .auth-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2rem 1.75rem;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: var(--card-sh);
+      border: 1px solid var(--border);
+    }
+
+    .field-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+      display: block;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.97rem;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    input:focus, textarea:focus { border-color: var(--sepia); }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.97rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      text-align: center;
+    }
+
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { opacity: 0.55; pointer-events: none; }
+
+    .btn-primary { background: var(--rust); color: #fff; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      margin-top: 0.6rem;
+    }
+    .btn-danger { background: #c0392b; color: #fff; }
+    .btn-safe   { background: var(--safe); color: #fff; }
+    .btn-sm {
+      width: auto;
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.82rem;
+      border-radius: 8px;
+    }
+
+    .error-msg {
+      color: #c0392b;
+      font-size: 0.83rem;
+      margin-top: 0.4rem;
+      min-height: 1.2em;
+      text-align: center;
+    }
+
+    /* ════════════════════════════════════════
+       APP HEADER
+    ════════════════════════════════════════ */
+    #app-header {
+      background: var(--rust);
+      color: #fff;
+      padding: 0.9rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(181,84,26,0.3);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .header-brand .g { font-size: 1.4rem; line-height: 1; }
+    .header-brand .r {
+      font-family: 'Lora', serif;
+      font-style: italic;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    #unread-badge {
+      background: #fff;
+      color: var(--rust);
+      font-weight: 700;
+      font-size: 0.72rem;
+      border-radius: 999px;
+      padding: 0.12rem 0.5rem;
+      margin-left: 0.3rem;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+    .icon-btn {
+      background: rgba(255,255,255,0.18);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.4rem 0.6rem;
+      font-size: 1rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* ════════════════════════════════════════
+       TABS
+    ════════════════════════════════════════ */
+    #tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 52px;
+      z-index: 99;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 0.8rem 0.5rem;
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .tab.active { color: var(--rust); border-bottom-color: var(--rust); }
+
+    /* ════════════════════════════════════════
+       PANELS
+    ════════════════════════════════════════ */
+    .panel { display: none; padding: 1.1rem; flex: 1; }
+    .panel.active { display: block; }
+
+    /* ════════════════════════════════════════
+       CONTACTS PANEL
+    ════════════════════════════════════════ */
+    .section-head {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .my-code-box {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .my-code-box .label { font-size: 0.78rem; color: var(--muted); }
+    .my-code-box .code {
+      font-family: 'Lora', serif;
+      font-size: 1.3rem;
+      color: var(--rust);
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    .copy-btn {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .add-contact-box {
+      background: #fff;
+      border: 1.5px dashed var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .add-contact-box input { margin-bottom: 0.5rem; }
+
+    .slots-grid { display: flex; flex-direction: column; gap: 0.7rem; }
+
+    .slot-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      box-shadow: var(--card-sh);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+      position: relative;
+    }
+
+    .slot-card:active { box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+    .slot-card.empty {
+      opacity: 0.5;
+      cursor: default;
+      background: var(--paper);
+    }
+
+    .slot-info { flex: 1; }
+    .slot-name { font-weight: 600; font-size: 0.97rem; color: var(--ink); }
+    .slot-town { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
+    .slot-warn { font-size: 0.72rem; color: var(--warn); margin-top: 0.2rem; }
+
+    .slot-right { display: flex; align-items: center; gap: 0.5rem; }
+
+    .unread-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: var(--rust);
+      flex-shrink: 0;
+    }
+
+    .slot-number {
+      font-size: 0.72rem;
+      color: var(--border);
+      font-weight: 600;
+      min-width: 1.2rem;
+      text-align: right;
+    }
+
+    /* ════════════════════════════════════════
+       THREAD VIEW (letters with a contact)
+    ════════════════════════════════════════ */
+    #thread-view {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      background: var(--paper);
+    }
+
+    #thread-view.active { display: flex; }
+
+    #thread-header {
+      background: var(--rust);
+      color: #fff;
+      padding: 0.9rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    #thread-back {
+      background: rgba(255,255,255,0.18);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      padding: 0.4rem 0.7rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    #thread-name { font-weight: 600; font-size: 1rem; }
+    #thread-town { font-size: 0.78rem; opacity: 0.8; }
+
+    #thread-actions { margin-left: auto; display: flex; gap: 0.5rem; }
+
+    #thread-letters {
+      flex: 1;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      overflow-y: auto;
+    }
+
+    .letter-bubble {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      box-shadow: var(--card-sh);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--border);
+    }
+
+    .letter-bubble.unread { border-left-color: var(--rust); }
+    .letter-bubble.mine   { border-left-color: var(--sepia); background: var(--cream); }
+
+    .bubble-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .bubble-from { font-weight: 600; font-size: 0.82rem; color: var(--rust); }
+    .bubble-from.mine-label { color: var(--sepia); }
+    .bubble-time { font-size: 0.72rem; color: var(--muted); }
+
+    .bubble-body {
+      font-family: 'Lora', serif;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--ink);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .bubble-body.collapsed {
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .bubble-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.6rem;
+    }
+
+    .read-toggle {
+      font-size: 0.76rem;
+      color: var(--sepia);
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .save-btn {
+      font-size: 0.76rem;
+      color: var(--muted);
+      cursor: pointer;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.2rem 0.55rem;
+    }
+
+    /* Write area in thread */
+    #thread-compose {
+      background: #fff;
+      border-top: 2px solid var(--border);
+      padding: 1rem;
+    }
+
+    #thread-compose textarea {
+      min-height: 100px;
+      resize: none;
+      margin-bottom: 0.4rem;
+    }
+
+    .compose-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #word-count { font-size: 0.78rem; color: var(--muted); }
+    #word-count.over { color: #c0392b; font-weight: 600; }
+
+    #thread-send {
+      width: auto;
+      padding: 0.55rem 1.3rem;
+      font-size: 0.9rem;
+    }
+
+    /* ════════════════════════════════════════
+       WRITE PANEL (home tab fallback)
+    ════════════════════════════════════════ */
+    .hint-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* ════════════════════════════════════════
+       ADMIN / GEAR PANEL
+    ════════════════════════════════════════ */
+    #screen-admin {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      background: var(--paper);
+    }
+
+    #screen-admin.active { display: flex; }
+
+    #admin-header {
+      background: #2c2016;
+      color: #fff;
+      padding: 0.9rem 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    #admin-header h2 { font-size: 1rem; font-weight: 600; }
+
+    #admin-body { padding: 1.1rem; display: flex; flex-direction: column; gap: 1rem; }
+
+    .admin-slot {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--card-sh);
+    }
+
+    .admin-slot-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.6rem;
+    }
+
+    .admin-slot-name { font-weight: 600; font-size: 0.97rem; }
+    .admin-slot-meta { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
+    .admin-slot-warn { font-size: 0.75rem; color: var(--warn); margin-top: 0.2rem; }
+    .admin-slot-empty { opacity: 0.45; font-style: italic; }
+
+    /* ════════════════════════════════════════
+       TOAST
+    ════════════════════════════════════════ */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(4rem);
+      background: #1a1208;
+      color: #fff;
+      padding: 0.65rem 1.3rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      z-index: 9999;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ════════════════════════════════════════
+       MODAL OVERLAY
+    ════════════════════════════════════════ */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,18,8,0.55);
+      z-index: 500;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    #modal-overlay.active { display: flex; }
+
+    .modal-sheet {
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      padding: 1.5rem 1.5rem 2rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .modal-title {
+      font-family: 'Lora', serif;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+
+    .modal-body { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
+    .modal-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .hidden { display: none !important; }
+    .mt1 { margin-top: 1rem; }
+    .mt05 { margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     AUTH SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-auth" class="screen">
+  <div class="auth-brand">
+    <span class="gurmukhi">ਚਿੱਠੀ</span>
+    <span class="roman">Chithi</span>
+    <div class="tagline">Letters for the ones you love</div>
+  </div>
+  <div class="auth-card">
+    <label class="field-label">Email</label>
+    <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email" />
+    <label class="field-label">Password</label>
+    <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" />
+    <button class="btn btn-primary" id="login-btn">Sign In</button>
+    <div class="error-msg" id="auth-error"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN APP SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-app" class="screen">
+
+  <div id="app-header">
+    <div class="header-brand">
+      <span class="g">ਚਿੱਠੀ</span>
+      <span class="r">Chithi</span>
+      <span id="unread-badge" class="hidden">0</span>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="gear-btn" title="Admin">⚙️</button>
+      <button class="icon-btn" id="signout-btn" title="Sign out">↩</button>
+    </div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" data-tab="contacts">Contacts</button>
+    <button class="tab" data-tab="write">Write</button>
+  </div>
+
+  <!-- CONTACTS PANEL -->
+  <div id="contacts-panel" class="panel active">
+
+    <div class="my-code-box">
+      <div>
+        <div class="label">Your Chithi code</div>
+        <div class="code" id="my-code-display">—</div>
+      </div>
+      <button class="copy-btn" id="copy-code-btn">Copy</button>
+    </div>
+
+    <div class="add-contact-box">
+      <div class="section-head">Add a contact</div>
+      <input type="text" id="add-code-input" placeholder="Enter their code e.g. KAMALJIT-4821" maxlength="20" />
+      <input type="text" id="add-label-input" placeholder="Their name / label" maxlength="30" />
+      <input type="text" id="add-town-input" placeholder="Town / city (optional)" maxlength="30" />
+      <button class="btn btn-primary btn-sm" id="add-contact-btn">Add Contact</button>
+      <div class="error-msg" id="add-error"></div>
+    </div>
+
+    <div class="section-head">Your slots (10)</div>
+    <div class="slots-grid" id="slots-grid">
+      <!-- filled by JS -->
+    </div>
+
+    <button class="btn btn-ghost mt1" id="leave-btn" style="font-size:0.85rem">Leave Chithi / Free my slot</button>
+  </div>
+
+  <!-- WRITE PANEL (select a contact first) -->
+  <div id="write-panel" class="panel">
+    <div class="hint-box">
+      <div style="font-size:1.6rem;margin-bottom:0.5rem">✉️</div>
+      Go to <strong>Contacts</strong> and tap a contact to open your letter thread and write to them.
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     THREAD VIEW
+══════════════════════════════════════════ -->
+<div id="thread-view">
+  <div id="thread-header">
+    <button id="thread-back">←</button>
+    <div>
+      <div id="thread-name">—</div>
+      <div id="thread-town"></div>
+    </div>
+    <div id="thread-actions">
+      <button class="icon-btn" id="thread-leave-btn" title="Remove this contact">✕</button>
+    </div>
+  </div>
+
+  <div id="thread-letters">
+    <!-- letter bubbles injected here -->
+  </div>
+
+  <div id="thread-compose">
+    <textarea id="compose-body" placeholder="Write your letter…" maxlength="9999"></textarea>
+    <div class="compose-footer">
+      <span id="word-count">0 / 500 words</span>
+      <button class="btn btn-primary" id="thread-send">Send ✉️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADMIN SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-admin">
+  <div id="admin-header">
+    <button class="icon-btn" id="admin-back">←</button>
+    <h2>⚙️ Postmaster Panel</h2>
+  </div>
+  <div id="admin-body">
+    <!-- slot rows injected by JS -->
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL
+══════════════════════════════════════════ -->
+<div id="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-title" id="modal-title">Confirm</div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     FIREBASE + APP LOGIC
+══════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getDatabase, ref, get, set, push, update, remove, query, orderByChild, limitToLast
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ─────────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyBOdLnMFLCkFJR3vDl5rOMECaArXGdimHE",
+  authDomain:        "dakiya-app-570ad.firebaseapp.com",
+  databaseURL:       "https://dakiya-app-570ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "dakiya-app-570ad",
+  storageBucket:     "dakiya-app-570ad.appspot.com",
+  messagingSenderId: "867430820537",
+  appId:             "1:867430820537:web:b7f58fba82d5e4e7b8c0c1"
+};
+
+// UID of the owner/admin (Kamaljit) — update after first login if needed
+// To find yours: after logging in open browser console and type: firebase.auth().currentUser.uid
+// Or just set your email here and we'll match by email
+const OWNER_EMAIL = "singhkamaljit@youremail.com"; // ← UPDATE THIS
+
+const MAX_SLOTS    = 10;
+const MAX_LETTERS  = 10;   // per contact pair
+const MAX_WORDS    = 500;
+const INACTIVITY_DAYS = 90;
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+const app  = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(app);
+const db   = getDatabase(app);
+
+let ME = null; // { uid, email, code, displayName }
+let activeContactSlot = null; // slot index currently open in thread
+
+// ─────────────────────────────────────────────
+// DOM REFS
+// ─────────────────────────────────────────────
+const screenAuth   = document.getElementById("screen-auth");
+const screenApp    = document.getElementById("screen-app");
+const threadView   = document.getElementById("thread-view");
+const screenAdmin  = document.getElementById("screen-admin");
+
+const authEmail    = document.getElementById("auth-email");
+const authPass     = document.getElementById("auth-pass");
+const loginBtn     = document.getElementById("login-btn");
+const authError    = document.getElementById("auth-error");
+
+const unreadBadge  = document.getElementById("unread-badge");
+const gearBtn      = document.getElementById("gear-btn");
+const signoutBtn   = document.getElementById("signout-btn");
+
+const myCodeDisplay = document.getElementById("my-code-display");
+const copyCodeBtn   = document.getElementById("copy-code-btn");
+const addCodeInput  = document.getElementById("add-code-input");
+const addLabelInput = document.getElementById("add-label-input");
+const addTownInput  = document.getElementById("add-town-input");
+const addContactBtn = document.getElementById("add-contact-btn");
+const addError      = document.getElementById("add-error");
+const slotsGrid     = document.getElementById("slots-grid");
+const leaveBtn      = document.getElementById("leave-btn");
+
+const threadBack    = document.getElementById("thread-back");
+const threadName    = document.getElementById("thread-name");
+const threadTown    = document.getElementById("thread-town");
+const threadLeaveBtn= document.getElementById("thread-leave-btn");
+const threadLetters = document.getElementById("thread-letters");
+const composeBody   = document.getElementById("compose-body");
+const wordCount     = document.getElementById("word-count");
+const threadSend    = document.getElementById("thread-send");
+
+const adminBack     = document.getElementById("admin-back");
+const adminBody     = document.getElementById("admin-body");
+
+const modalOverlay  = document.getElementById("modal-overlay");
+const modalTitle    = document.getElementById("modal-title");
+const modalBody     = document.getElementById("modal-body");
+const modalActions  = document.getElementById("modal-actions");
+const toast         = document.getElementById("toast");
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function showScreen(name) {
+  // name: 'auth' | 'app' | 'thread' | 'admin'
+  screenAuth.classList.remove("active");
+  screenApp.classList.remove("active");
+  threadView.classList.remove("active");
+  screenAdmin.classList.remove("active");
+  if (name === "auth")   { screenAuth.classList.add("active"); }
+  if (name === "app")    { screenApp.classList.add("active"); }
+  if (name === "thread") { threadView.classList.add("active"); }
+  if (name === "admin")  { screenAdmin.classList.add("active"); }
+}
+
+function showToast(msg, duration = 2500) {
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), duration);
+}
+
+function showModal(title, body, buttons) {
+  // buttons: [{label, cls, action}]
+  modalTitle.textContent = title;
+  modalBody.textContent  = body;
+  modalActions.innerHTML = "";
+  buttons.forEach(b => {
+    const btn = document.createElement("button");
+    btn.className = `btn ${b.cls || "btn-ghost"}`;
+    btn.textContent = b.label;
+    btn.addEventListener("click", () => {
+      modalOverlay.classList.remove("active");
+      b.action && b.action();
+    });
+    modalActions.appendChild(btn);
+  });
+  modalOverlay.classList.add("active");
+}
+
+modalOverlay.addEventListener("click", e => {
+  if (e.target === modalOverlay) modalOverlay.classList.remove("active");
+});
+
+function wordCountOf(text) {
+  return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+}
+
+function formatDate(ts) {
+  return new Date(ts).toLocaleString("en-IN", {
+    day: "2-digit", month: "short", year: "numeric",
+    hour: "2-digit", minute: "2-digit"
+  });
+}
+
+function daysSince(ts) {
+  return Math.floor((Date.now() - ts) / 86400000);
+}
+
+function generateCode(name) {
+  // NAME-XXXX  (first word of name, uppercase, + 4 random digits)
+  const base = (name || "USER").trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, "").slice(0, 12);
+  const num  = Math.floor(1000 + Math.random() * 9000);
+  return `${base}-${num}`;
+}
+
+// ─────────────────────────────────────────────
+// DB PATH HELPERS
+// ─────────────────────────────────────────────
+// /chithi/users/{uid}/profile   → { code, displayName, email, createdAt }
+// /chithi/users/{uid}/slots/{0..9} → { contactUid, contactName, contactTown, addedAt, lastActivity }
+// /chithi/letters/{uid_a}_{uid_b}/{letterId} → { from, fromName, body, ts, read }
+// (uid_a < uid_b always, to form a canonical pair key)
+
+function pairKey(uid1, uid2) {
+  return [uid1, uid2].sort().join("_");
+}
+
+function userRef(uid)    { return ref(db, `chithi/users/${uid}`); }
+function profileRef(uid) { return ref(db, `chithi/users/${uid}/profile`); }
+function slotsRef(uid)   { return ref(db, `chithi/users/${uid}/slots`); }
+function slotRef(uid, i) { return ref(db, `chithi/users/${uid}/slots/${i}`); }
+function lettersRef(uid1, uid2) { return ref(db, `chithi/letters/${pairKey(uid1, uid2)}`); }
+
+async function getProfile(uid) {
+  const snap = await get(profileRef(uid));
+  return snap.exists() ? snap.val() : null;
+}
+
+async function getMySlots() {
+  const snap = await get(slotsRef(ME.uid));
+  if (!snap.exists()) return Array(MAX_SLOTS).fill(null);
+  const slots = Array(MAX_SLOTS).fill(null);
+  snap.forEach(child => { slots[parseInt(child.key)] = child.val(); });
+  return slots;
+}
+
+async function findCodeOwner(code) {
+  // scan all users for matching code
+  const snap = await get(ref(db, "chithi/users"));
+  if (!snap.exists()) return null;
+  let found = null;
+  snap.forEach(child => {
+    const p = child.val().profile;
+    if (p && p.code === code.toUpperCase().trim()) {
+      found = { uid: child.key, ...p };
+    }
+  });
+  return found;
+}
+
+// ─────────────────────────────────────────────
+// AUTH
+// ─────────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  if (!user) {
+    ME = null;
+    showScreen("auth");
+    return;
+  }
+  // load or create profile
+  let profile = await getProfile(user.uid);
+  if (!profile) {
+    // first login — create profile
+    const name = user.displayName || user.email.split("@")[0];
+    profile = {
+      code:        generateCode(name),
+      displayName: name,
+      email:       user.email,
+      createdAt:   Date.now()
+    };
+    await set(profileRef(user.uid), profile);
+  }
+  ME = { uid: user.uid, email: user.email, ...profile };
+  myCodeDisplay.textContent = ME.code;
+  showScreen("app");
+  renderSlots();
+});
+
+loginBtn.addEventListener("click", async () => {
+  authError.textContent = "";
+  const email = authEmail.value.trim();
+  const pass  = authPass.value;
+  if (!email || !pass) { authError.textContent = "Enter email and password."; return; }
+  loginBtn.disabled = true; loginBtn.textContent = "Signing in…";
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch (e) {
+    authError.textContent = friendlyAuthError(e.code);
+    loginBtn.disabled = false; loginBtn.textContent = "Sign In";
+  }
+});
+
+authPass.addEventListener("keydown", e => { if (e.key === "Enter") loginBtn.click(); });
+
+signoutBtn.addEventListener("click", () => signOut(auth));
+
+function friendlyAuthError(code) {
+  return {
+    "auth/invalid-email":      "Invalid email address.",
+    "auth/user-not-found":     "No account found.",
+    "auth/wrong-password":     "Wrong password.",
+    "auth/too-many-requests":  "Too many attempts. Try later.",
+    "auth/invalid-credential": "Wrong email or password."
+  }[code] || "Sign-in failed. Try again.";
+}
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(tab.dataset.tab + "-panel").classList.add("active");
+  });
+});
+
+// ─────────────────────────────────────────────
+// COPY MY CODE
+// ─────────────────────────────────────────────
+copyCodeBtn.addEventListener("click", () => {
+  navigator.clipboard.writeText(ME.code).then(() => showToast("Code copied!"));
+});
+
+// ─────────────────────────────────────────────
+// ADD CONTACT
+// ─────────────────────────────────────────────
+addContactBtn.addEventListener("click", async () => {
+  addError.textContent = "";
+  const code  = addCodeInput.value.trim().toUpperCase();
+  const label = addLabelInput.value.trim();
+  const town  = addTownInput.value.trim();
+
+  if (!code)  { addError.textContent = "Enter their code."; return; }
+  if (!label) { addError.textContent = "Enter a name/label."; return; }
+
+  addContactBtn.disabled = true; addContactBtn.textContent = "Adding…";
+
+  try {
+    // don't add yourself
+    if (code === ME.code) {
+      addError.textContent = "That's your own code!";
+      addContactBtn.disabled = false; addContactBtn.textContent = "Add Contact";
+      return;
+    }
+
+    const slots = await getMySlots();
+
+    // check already added
+    const alreadyIn = slots.some(s => s && s.contactCode === code);
+    if (alreadyIn) {
+      addError.textContent = "This person is already in your contacts.";
+      addContactBtn.disabled = false; addContactBtn.textContent = "Add Contact";
+      return;
+    }
+
+    // find empty slot
+    const emptyIdx = slots.findIndex(s => s === null);
+    if (emptyIdx === -1) {
+      addError.textContent = "All 10 slots are full. Free one first.";
+      addContactBtn.disabled = false; addContactBtn.textContent = "Add Contact";
+      return;
+    }
+
+    // find code owner in DB
+    const contact = await findCodeOwner(code);
+    if (!contact) {
+      addError.textContent = "No one found with that code.";
+      addContactBtn.disabled = false; addContactBtn.textContent = "Add Contact";
+      return;
+    }
+
+    await set(slotRef(ME.uid, emptyIdx), {
+      contactUid:   contact.uid,
+      contactCode:  code,
+      contactName:  label,
+      contactTown:  town,
+      addedAt:      Date.now(),
+      lastActivity: Date.now()
+    });
+
+    addCodeInput.value = "";
+    addLabelInput.value = "";
+    addTownInput.value = "";
+    showToast(`${label} added to slot ${emptyIdx + 1} ✅`);
+    renderSlots();
+  } catch (e) {
+    addError.textContent = "Failed. Try again.";
+  }
+
+  addContactBtn.disabled = false; addContactBtn.textContent = "Add Contact";
+});
+
+// ─────────────────────────────────────────────
+// RENDER SLOTS
+// ─────────────────────────────────────────────
+async function renderSlots() {
+  slotsGrid.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:0.5rem">Loading contacts…</div>';
+  const slots = await getMySlots();
+  let totalUnread = 0;
+  slotsGrid.innerHTML = "";
+
+  for (let i = 0; i < MAX_SLOTS; i++) {
+    const s = slots[i];
+    const card = document.createElement("div");
+    card.className = "slot-card" + (s ? "" : " empty");
+
+    if (!s) {
+      card.innerHTML = `
+        <div class="slot-info">
+          <div class="slot-name" style="color:var(--muted);font-weight:400">Empty slot</div>
+        </div>
+        <div class="slot-number">${i + 1}</div>`;
+    } else {
+      // check unread
+      let unread = 0;
+      try {
+        const q    = query(lettersRef(ME.uid, s.contactUid), orderByChild("ts"), limitToLast(MAX_LETTERS));
+        const snap = await get(q);
+        snap.forEach(child => {
+          const l = child.val();
+          if (!l.read && l.from !== ME.uid) unread++;
+        });
+      } catch(_) {}
+
+      totalUnread += unread;
+
+      const inactive = daysSince(s.lastActivity || s.addedAt);
+      const warnHtml = inactive >= INACTIVITY_DAYS
+        ? `<div class="slot-warn">⚠️ No activity for ${inactive} days</div>` : "";
+
+      card.innerHTML = `
+        <div class="slot-info">
+          <div class="slot-name">${s.contactName}</div>
+          <div class="slot-town">${s.contactTown || ""}</div>
+          ${warnHtml}
+        </div>
+        <div class="slot-right">
+          ${unread > 0 ? `<div class="unread-dot"></div>` : ""}
+          <div class="slot-number">${i + 1}</div>
+        </div>`;
+
+      card.addEventListener("click", () => openThread(i, s));
+    }
+
+    slotsGrid.appendChild(card);
+  }
+
+  // update badge
+  if (totalUnread > 0) {
+    unreadBadge.textContent = totalUnread;
+    unreadBadge.classList.remove("hidden");
+  } else {
+    unreadBadge.classList.add("hidden");
+  }
+}
+
+// ─────────────────────────────────────────────
+// THREAD VIEW
+// ─────────────────────────────────────────────
+async function openThread(slotIdx, slot) {
+  activeContactSlot = { slotIdx, ...slot };
+  threadName.textContent = slot.contactName;
+  threadTown.textContent = slot.contactTown || "";
+  threadLetters.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:0.5rem">Loading…</div>';
+  composeBody.value = "";
+  wordCount.textContent = "0 / 500 words";
+  showScreen("thread");
+  await loadThreadLetters(slot);
+}
+
+async function loadThreadLetters(slot) {
+  threadLetters.innerHTML = "";
+  try {
+    const q    = query(lettersRef(ME.uid, slot.contactUid), orderByChild("ts"), limitToLast(MAX_LETTERS));
+    const snap = await get(q);
+    const letters = [];
+    snap.forEach(c => letters.push({ id: c.key, ...c.val() }));
+    letters.reverse();
+
+    if (letters.length === 0) {
+      threadLetters.innerHTML = '<div style="color:var(--muted);font-size:0.9rem;padding:1rem;text-align:center">No letters yet. Write the first one ✉️</div>';
+      return;
+    }
+
+    for (const letter of letters) {
+      const isMine  = letter.from === ME.uid;
+      const isUnread = !letter.read && !isMine;
+
+      // auto-mark read
+      if (isUnread) {
+        try {
+          const lRef = ref(db, `chithi/letters/${pairKey(ME.uid, slot.contactUid)}/${letter.id}`);
+          await update(lRef, { read: true });
+          letter.read = true;
+        } catch(_) {}
+      }
+
+      const bubble = document.createElement("div");
+      bubble.className = `letter-bubble${isUnread ? " unread" : ""}${isMine ? " mine" : ""}`;
+
+      const body = document.createElement("div");
+      body.className = "bubble-body collapsed";
+      body.textContent = letter.body;
+
+      let expanded = false;
+
+      bubble.innerHTML = `
+        <div class="bubble-meta">
+          <span class="bubble-from ${isMine ? "mine-label" : ""}">${letter.fromName}</span>
+          <span class="bubble-time">${formatDate(letter.ts)}</span>
+        </div>`;
+
+      bubble.appendChild(body);
+
+      const footer = document.createElement("div");
+      footer.className = "bubble-footer";
+
+      const toggle = document.createElement("span");
+      toggle.className = "read-toggle";
+      toggle.textContent = "Read full letter";
+
+      toggle.addEventListener("click", () => {
+        expanded = !expanded;
+        body.classList.toggle("collapsed", !expanded);
+        toggle.textContent = expanded ? "Collapse" : "Read full letter";
+      });
+
+      const saveBtn = document.createElement("button");
+      saveBtn.className = "save-btn";
+      saveBtn.textContent = "⬇ Save";
+      saveBtn.addEventListener("click", () => saveLetter(letter, slot.contactName));
+
+      footer.appendChild(toggle);
+      footer.appendChild(saveBtn);
+      bubble.appendChild(footer);
+      threadLetters.appendChild(bubble);
+    }
+
+    // update lastActivity on my slot
+    try {
+      await update(slotRef(ME.uid, activeContactSlot.slotIdx), { lastActivity: Date.now() });
+    } catch(_) {}
+
+  } catch(e) {
+    threadLetters.innerHTML = '<div style="color:#c0392b;font-size:0.85rem;padding:0.5rem">Failed to load letters.</div>';
+  }
+}
+
+// ─────────────────────────────────────────────
+// SAVE / EXPORT LETTER
+// ─────────────────────────────────────────────
+function saveLetter(letter, contactName) {
+  const text = [
+    `ਚਿੱਠੀ · Chithi — Letter Export`,
+    `From: ${letter.fromName}`,
+    `To: ${letter.from === ME.uid ? contactName : ME.displayName}`,
+    `Date: ${formatDate(letter.ts)}`,
+    ``,
+    letter.body
+  ].join("\n");
+
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = `chithi-${letter.fromName}-${new Date(letter.ts).toISOString().slice(0,10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("Letter saved ✅");
+}
+
+// ─────────────────────────────────────────────
+// WORD COUNT & SEND
+// ─────────────────────────────────────────────
+composeBody.addEventListener("input", () => {
+  const wc = wordCountOf(composeBody.value);
+  wordCount.textContent = `${wc} / ${MAX_WORDS} words`;
+  wordCount.classList.toggle("over", wc > MAX_WORDS);
+});
+
+threadSend.addEventListener("click", async () => {
+  const body = composeBody.value.trim();
+  if (!body) { showToast("Write something first"); return; }
+  if (wordCountOf(body) > MAX_WORDS) { showToast("Too long — keep it under 500 words"); return; }
+  if (!activeContactSlot) return;
+
+  threadSend.disabled = true; threadSend.textContent = "Sending…";
+
+  try {
+    const lRef   = lettersRef(ME.uid, activeContactSlot.contactUid);
+    const q      = query(lRef, orderByChild("ts"), limitToLast(MAX_LETTERS));
+    const snap   = await get(q);
+    const existing = [];
+    snap.forEach(c => existing.push({ id: c.key, ts: c.val().ts }));
+
+    // enforce cap: delete oldest if at limit
+    if (existing.length >= MAX_LETTERS) {
+      existing.sort((a,b) => a.ts - b.ts);
+      const toDelete = existing.slice(0, existing.length - MAX_LETTERS + 1);
+      for (const old of toDelete) {
+        await remove(ref(db, `chithi/letters/${pairKey(ME.uid, activeContactSlot.contactUid)}/${old.id}`));
+      }
+    }
+
+    await push(lRef, {
+      from:      ME.uid,
+      fromName:  ME.displayName,
+      body:      body,
+      ts:        Date.now(),
+      read:      false
+    });
+
+    // update lastActivity on my slot
+    await update(slotRef(ME.uid, activeContactSlot.slotIdx), { lastActivity: Date.now() });
+
+    composeBody.value = "";
+    wordCount.textContent = `0 / ${MAX_WORDS} words`;
+    showToast("Letter sent ✉️");
+    await loadThreadLetters(activeContactSlot);
+  } catch(e) {
+    showToast("Failed to send. Try again.");
+  }
+
+  threadSend.disabled = false; threadSend.textContent = "Send ✉️";
+});
+
+// ─────────────────────────────────────────────
+// THREAD BACK
+// ─────────────────────────────────────────────
+threadBack.addEventListener("click", () => {
+  showScreen("app");
+  renderSlots();
+});
+
+// ─────────────────────────────────────────────
+// REMOVE CONTACT FROM THREAD
+// ─────────────────────────────────────────────
+threadLeaveBtn.addEventListener("click", () => {
+  const s = activeContactSlot;
+  showModal(
+    `Remove ${s.contactName}?`,
+    `This will free slot ${s.slotIdx + 1}. Your letter history with ${s.contactName} will be deleted. Export any letters you want to keep first.`,
+    [
+      { label: "Export all first", cls: "btn-safe", action: async () => {
+          await exportAllLetters(s);
+          confirmRemoveContact(s);
+        }
+      },
+      { label: "Remove without export", cls: "btn-danger", action: () => confirmRemoveContact(s) },
+      { label: "Cancel", cls: "btn-ghost" }
+    ]
+  );
+});
+
+async function exportAllLetters(slot) {
+  const q    = query(lettersRef(ME.uid, slot.contactUid), orderByChild("ts"), limitToLast(MAX_LETTERS));
+  const snap = await get(q);
+  const lines = [`ਚਿੱਠੀ · Chithi — Full History with ${slot.contactName}`, ""];
+  snap.forEach(c => {
+    const l = c.val();
+    lines.push(`[${formatDate(l.ts)}] ${l.fromName}:`);
+    lines.push(l.body);
+    lines.push("");
+  });
+  const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = `chithi-history-${slot.contactName}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function confirmRemoveContact(slot) {
+  try {
+    // delete letter history
+    await remove(lettersRef(ME.uid, slot.contactUid));
+    // free slot
+    await remove(slotRef(ME.uid, slot.slotIdx));
+    showToast(`Slot ${slot.slotIdx + 1} freed ✅`);
+    showScreen("app");
+    renderSlots();
+  } catch(e) {
+    showToast("Failed. Try again.");
+  }
+}
+
+// ─────────────────────────────────────────────
+// LEAVE CHITHI (remove myself)
+// ─────────────────────────────────────────────
+leaveBtn.addEventListener("click", () => {
+  showModal(
+    "Leave ਚਿੱਠੀ?",
+    "This will delete your profile and free your slot from all contacts. You can re-join later with a new code. Your letter histories will be deleted.",
+    [
+      { label: "Leave & delete my data", cls: "btn-danger", action: leavChithi },
+      { label: "Cancel", cls: "btn-ghost" }
+    ]
+  );
+});
+
+async function leavChithi() {
+  try {
+    // delete all my letter threads
+    const slots = await getMySlots();
+    for (const s of slots) {
+      if (s) await remove(lettersRef(ME.uid, s.contactUid));
+    }
+    // delete my user node
+    await remove(userRef(ME.uid));
+    await signOut(auth);
+    showToast("You've left Chithi. Goodbye 🙏");
+  } catch(e) {
+    showToast("Failed. Try again.");
+  }
+}
+
+// ─────────────────────────────────────────────
+// GEAR / ADMIN (owner only)
+// ─────────────────────────────────────────────
+gearBtn.addEventListener("click", async () => {
+  if (ME.email !== OWNER_EMAIL) {
+    showToast("Admin access is for the postmaster only.");
+    return;
+  }
+  showScreen("admin");
+  await renderAdminPanel();
+});
+
+adminBack.addEventListener("click", () => {
+  showScreen("app");
+  renderSlots();
+});
+
+async function renderAdminPanel() {
+  adminBody.innerHTML = '<div style="color:var(--muted);padding:1rem">Loading all slots…</div>';
+
+  try {
+    const snap = await get(ref(db, "chithi/users"));
+    if (!snap.exists()) {
+      adminBody.innerHTML = '<div style="color:var(--muted);padding:1rem">No users yet.</div>';
+      return;
+    }
+
+    adminBody.innerHTML = "";
+
+    snap.forEach(userSnap => {
+      const uid     = userSnap.key;
+      const profile = userSnap.val().profile;
+      const slotsRaw = userSnap.val().slots || {};
+
+      if (!profile) return;
+
+      const userSection = document.createElement("div");
+      userSection.style.marginBottom = "1.25rem";
+
+      const heading = document.createElement("div");
+      heading.className = "section-head";
+      heading.textContent = `${profile.displayName} (${profile.code})`;
+      userSection.appendChild(heading);
+
+      for (let i = 0; i < MAX_SLOTS; i++) {
+        const s     = slotsRaw[i] || null;
+        const aCard = document.createElement("div");
+        aCard.className = "admin-slot";
+
+        if (!s) {
+          aCard.innerHTML = `
+            <div class="admin-slot-head">
+              <div>
+                <div class="admin-slot-name admin-slot-empty">Slot ${i+1} — empty</div>
+              </div>
+            </div>`;
+        } else {
+          const inactive = daysSince(s.lastActivity || s.addedAt);
+          const warnHtml = inactive >= INACTIVITY_DAYS
+            ? `<div class="admin-slot-warn">⚠️ Inactive ${inactive} days</div>` : "";
+
+          aCard.innerHTML = `
+            <div class="admin-slot-head">
+              <div>
+                <div class="admin-slot-name">Slot ${i+1} — ${s.contactName}</div>
+                <div class="admin-slot-meta">${s.contactTown || ""} · Code: ${s.contactCode}</div>
+                <div class="admin-slot-meta">Last activity: ${formatDate(s.lastActivity || s.addedAt)}</div>
+                ${warnHtml}
+              </div>
+              <button class="btn btn-danger btn-sm" data-uid="${uid}" data-slot="${i}" data-contact="${s.contactUid}" data-name="${s.contactName}">Free</button>
+            </div>`;
+
+          aCard.querySelector("button").addEventListener("click", async (e) => {
+            const btn         = e.currentTarget;
+            const targetUid   = btn.dataset.uid;
+            const slotIndex   = parseInt(btn.dataset.slot);
+            const contactUid  = btn.dataset.contact;
+            const contactName = btn.dataset.name;
+
+            showModal(
+              `Force-free slot?`,
+              `Remove ${contactName} from slot ${slotIndex+1} of ${profile.displayName}? Letter history will be deleted.`,
+              [
+                { label: "Free slot", cls: "btn-danger", action: async () => {
+                    try {
+                      await remove(ref(db, `chithi/letters/${pairKey(targetUid, contactUid)}`));
+                      await remove(ref(db, `chithi/users/${targetUid}/slots/${slotIndex}`));
+                      showToast("Slot freed ✅");
+                      renderAdminPanel();
+                    } catch(_) { showToast("Failed."); }
+                  }
+                },
+                { label: "Cancel", cls: "btn-ghost" }
+              ]
+            );
+          });
+        }
+
+        userSection.appendChild(aCard);
+      }
+
+      adminBody.appendChild(userSection);
+    });
+
+  } catch(e) {
+    adminBody.innerHTML = '<div style="color:#c0392b;padding:1rem">Failed to load admin data.</div>';
+  }
+}
+
+</script>
+</body>
+</html>
