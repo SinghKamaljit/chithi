@@ -996,7 +996,7 @@ loginBtn.addEventListener("click", async () => {
   try {
     await signInWithEmailAndPassword(auth, email, pass);
   } catch (e) {
-    authError.textContent = friendlyAuthError(e.code);
+    authError.textContent = e.code + ": " + e.message;
     loginBtn.disabled = false; loginBtn.textContent = "Sign In";
   }
 });
