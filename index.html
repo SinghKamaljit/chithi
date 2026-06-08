@@ -620,7 +620,11 @@
     <label class="field-label">Email</label>
     <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email" />
     <label class="field-label">Password</label>
-    <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" />
+    <div style="position:relative;margin-bottom:0">
+      <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:0;padding-right:3rem" />
+      <button type="button" id="toggle-pass" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--muted);width:auto;padding:0">👁</button>
+    </div>
+    <div style="height:1rem"></div>
     <button class="btn btn-primary" id="login-btn">Sign In</button>
     <div class="error-msg" id="auth-error"></div>
   </div>
@@ -908,8 +912,8 @@ function daysSince(ts) {
 }
 
 function generateCode(name) {
-  // NAME-XXXX  (first word of name, uppercase, + 4 random digits)
-  const base = (name || "USER").trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, "").slice(0, 12);
+  // FIRSTNAME-XXXX (first word of name, uppercase, max 10 chars, + 4 random digits)
+  const base = (name || "USER").trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, "").slice(0, 10);
   const num  = Math.floor(1000 + Math.random() * 9000);
   return `${base}-${num}`;
 }
@@ -1002,6 +1006,12 @@ loginBtn.addEventListener("click", async () => {
 });
 
 authPass.addEventListener("keydown", e => { if (e.key === "Enter") loginBtn.click(); });
+
+document.getElementById("toggle-pass").addEventListener("click", () => {
+  const isHidden = authPass.type === "password";
+  authPass.type = isHidden ? "text" : "password";
+  document.getElementById("toggle-pass").textContent = isHidden ? "🙈" : "👁";
+});
 
 signoutBtn.addEventListener("click", () => signOut(auth));
 
