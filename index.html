@@ -603,6 +603,62 @@
     .hidden { display: none !important; }
     .mt1 { margin-top: 1rem; }
     .mt05 { margin-top: 0.5rem; }
+
+    /* ════════════════════════════════════════
+       SETTINGS MODAL
+    ════════════════════════════════════════ */
+    #settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,18,8,0.55);
+      z-index: 600;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    #settings-overlay.active { display: flex; }
+    .settings-sheet {
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      padding: 1.5rem 1.5rem 2rem;
+      width: 100%;
+      max-width: 480px;
+    }
+    .settings-title {
+      font-family: 'Lora', serif;
+      font-size: 1.1rem;
+      margin-bottom: 1.25rem;
+      color: var(--ink);
+    }
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--ink);
+    }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { color: var(--muted); font-size: 0.78rem; margin-bottom: 0.2rem; }
+    .settings-value {
+      font-family: 'Lora', serif;
+      font-size: 1.05rem;
+      color: var(--rust);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .auth-toggle {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .auth-toggle a {
+      color: var(--rust);
+      cursor: pointer;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -617,16 +673,37 @@
     <div class="tagline">Letters for the ones you love</div>
   </div>
   <div class="auth-card">
-    <label class="field-label">Email</label>
-    <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email" />
-    <label class="field-label">Password</label>
-    <div style="position:relative;margin-bottom:0">
-      <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:0;padding-right:3rem" />
-      <button type="button" id="toggle-pass" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--muted);width:auto;padding:0">👁</button>
+
+    <!-- SIGN IN FORM -->
+    <div id="signin-form">
+      <label class="field-label">Email</label>
+      <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email" />
+      <label class="field-label">Password</label>
+      <div style="position:relative;margin-bottom:0">
+        <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" style="margin-bottom:0;padding-right:3rem" />
+        <button type="button" id="toggle-pass" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--muted);width:auto;padding:0">👁</button>
+      </div>
+      <div style="height:1rem"></div>
+      <button class="btn btn-primary" id="login-btn">Sign In</button>
+      <div class="error-msg" id="auth-error"></div>
+      <div class="auth-toggle">New here? <a id="show-signup">Create an account</a></div>
     </div>
-    <div style="height:1rem"></div>
-    <button class="btn btn-primary" id="login-btn">Sign In</button>
-    <div class="error-msg" id="auth-error"></div>
+
+    <!-- SIGN UP FORM -->
+    <div id="signup-form" class="hidden">
+      <label class="field-label">Email</label>
+      <input type="email" id="signup-email" placeholder="your@email.com" autocomplete="email" />
+      <label class="field-label">Password</label>
+      <input type="password" id="signup-pass" placeholder="Min 6 characters" autocomplete="new-password" />
+      <label class="field-label">Your name</label>
+      <input type="text" id="signup-name" placeholder="e.g. Gurpreet Kaur" maxlength="30" />
+      <label class="field-label">Invite code</label>
+      <input type="text" id="signup-invite" placeholder="Enter invite code" autocomplete="off" />
+      <button class="btn btn-primary" id="signup-btn">Create Account</button>
+      <div class="error-msg" id="signup-error"></div>
+      <div class="auth-toggle">Already have an account? <a id="show-signin">Sign in</a></div>
+    </div>
+
   </div>
 </div>
 
@@ -742,6 +819,19 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     SETTINGS SHEET
+══════════════════════════════════════════ -->
+<div id="settings-overlay">
+  <div class="settings-sheet">
+    <div class="settings-title">⚙️ Settings</div>
+    <div id="settings-body">
+      <!-- injected by JS -->
+    </div>
+    <button class="btn btn-ghost mt1" id="settings-close">Close</button>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -769,7 +859,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getDatabase, ref, get, set, push, update, remove, query, orderByChild, limitToLast
@@ -792,6 +882,7 @@ const FIREBASE_CONFIG = {
 // To find yours: after logging in open browser console and type: firebase.auth().currentUser.uid
 // Or just set your email here and we'll match by email
 const OWNER_EMAIL = "kamal310i@gmail.com";
+const INVITE_CODE = "CHITHI2025"; // change this anytime — share via WhatsApp
 
 const MAX_SLOTS    = 10;
 const MAX_LETTERS  = 10;   // per contact pair
@@ -846,6 +937,19 @@ const threadSend    = document.getElementById("thread-send");
 
 const adminBack     = document.getElementById("admin-back");
 const adminBody     = document.getElementById("admin-body");
+
+const settingsOverlay = document.getElementById("settings-overlay");
+const settingsBody    = document.getElementById("settings-body");
+const settingsClose   = document.getElementById("settings-close");
+
+const signupForm    = document.getElementById("signup-form");
+const signinForm    = document.getElementById("signin-form");
+const signupEmail   = document.getElementById("signup-email");
+const signupPass    = document.getElementById("signup-pass");
+const signupName    = document.getElementById("signup-name");
+const signupInvite  = document.getElementById("signup-invite");
+const signupBtn     = document.getElementById("signup-btn");
+const signupError   = document.getElementById("signup-error");
 
 const modalOverlay  = document.getElementById("modal-overlay");
 const modalTitle    = document.getElementById("modal-title");
@@ -976,12 +1080,12 @@ onAuthStateChanged(auth, async user => {
   let profile = await getProfile(user.uid);
   if (!profile) {
     // first login — create profile
-    // Hardcoded names by email since Firebase console mobile can't edit display names
     const NAME_MAP = {
       "kamal310i@gmail.com":  "Kamaljit Singh",
       "ksgill310i@gmail.com": "KS Gill"
     };
-    const rawName = NAME_MAP[user.email] || user.displayName || "User";
+    const rawName = NAME_MAP[user.email] || window.__pendingDisplayName || user.displayName || "User";
+    window.__pendingDisplayName = null;
     const profile = {
       code:        generateCode(rawName),
       displayName: rawName,
@@ -1011,6 +1115,54 @@ loginBtn.addEventListener("click", async () => {
 });
 
 authPass.addEventListener("keydown", e => { if (e.key === "Enter") loginBtn.click(); });
+
+// ─────────────────────────────────────────────
+// SIGNUP TOGGLE
+// ─────────────────────────────────────────────
+document.getElementById("show-signup").addEventListener("click", () => {
+  signinForm.classList.add("hidden");
+  signupForm.classList.remove("hidden");
+});
+
+document.getElementById("show-signin").addEventListener("click", () => {
+  signupForm.classList.add("hidden");
+  signinForm.classList.remove("hidden");
+});
+
+// ─────────────────────────────────────────────
+// SIGN UP
+// ─────────────────────────────────────────────
+signupBtn.addEventListener("click", async () => {
+  signupError.textContent = "";
+  const email  = signupEmail.value.trim();
+  const pass   = signupPass.value;
+  const name   = signupName.value.trim();
+  const invite = signupInvite.value.trim().toUpperCase();
+
+  if (!email)  { signupError.textContent = "Enter your email."; return; }
+  if (!pass || pass.length < 6) { signupError.textContent = "Password must be at least 6 characters."; return; }
+  if (!name)   { signupError.textContent = "Enter your name."; return; }
+  if (invite !== INVITE_CODE) { signupError.textContent = "Invite code is incorrect."; return; }
+
+  signupBtn.disabled = true; signupBtn.textContent = "Creating…";
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    // Profile will be created in onAuthStateChanged — inject name via NAME_MAP fallback
+    // We temporarily store name so onAuthStateChanged can use it
+    window.__pendingDisplayName = name;
+  } catch(e) {
+    signupError.textContent = friendlySignupError(e.code);
+    signupBtn.disabled = false; signupBtn.textContent = "Create Account";
+  }
+});
+
+function friendlySignupError(code) {
+  return {
+    "auth/email-already-in-use": "An account with this email already exists.",
+    "auth/invalid-email":        "Invalid email address.",
+    "auth/weak-password":        "Password is too weak.",
+  }[code] || `Sign-up failed (${code})`;
+}
 
 document.getElementById("toggle-pass").addEventListener("click", () => {
   const isHidden = authPass.type === "password";
@@ -1444,15 +1596,69 @@ async function leavChithi() {
 }
 
 // ─────────────────────────────────────────────
-// GEAR / ADMIN (owner only)
+// SETTINGS GEAR
 // ─────────────────────────────────────────────
-gearBtn.addEventListener("click", async () => {
-  if (ME.email !== OWNER_EMAIL) {
-    showToast("Admin access is for the postmaster only.");
-    return;
+gearBtn.addEventListener("click", () => {
+  settingsBody.innerHTML = "";
+
+  // My code row
+  const codeRow = document.createElement("div");
+  codeRow.className = "settings-row";
+  codeRow.innerHTML = `
+    <div>
+      <div class="settings-label">Your Chithi code</div>
+      <div class="settings-value">${ME.code}</div>
+    </div>
+    <button class="copy-btn" id="settings-copy-code">Copy</button>`;
+  settingsBody.appendChild(codeRow);
+  codeRow.querySelector("#settings-copy-code").addEventListener("click", () => {
+    navigator.clipboard.writeText(ME.code).then(() => showToast("Code copied!"));
+  });
+
+  // Name row
+  const nameRow = document.createElement("div");
+  nameRow.className = "settings-row";
+  nameRow.innerHTML = `
+    <div>
+      <div class="settings-label">Signed in as</div>
+      <div style="font-size:0.9rem;font-weight:500">${ME.displayName}</div>
+      <div style="font-size:0.75rem;color:var(--muted)">${ME.email}</div>
+    </div>`;
+  settingsBody.appendChild(nameRow);
+
+  // Invite code row — owner only
+  if (ME.email === OWNER_EMAIL) {
+    const inviteRow = document.createElement("div");
+    inviteRow.className = "settings-row";
+    inviteRow.innerHTML = `
+      <div>
+        <div class="settings-label">Invite code (share to let others join)</div>
+        <div class="settings-value">${INVITE_CODE}</div>
+      </div>
+      <button class="copy-btn" id="settings-copy-invite">Copy</button>`;
+    settingsBody.appendChild(inviteRow);
+    inviteRow.querySelector("#settings-copy-invite").addEventListener("click", () => {
+      navigator.clipboard.writeText(INVITE_CODE).then(() => showToast("Invite code copied!"));
+    });
+
+    // Admin panel link — owner only
+    const adminRow = document.createElement("div");
+    adminRow.className = "settings-row";
+    adminRow.innerHTML = `<div style="color:var(--rust);font-weight:500;cursor:pointer" id="settings-admin-link">⚙️ Open Postmaster Panel →</div>`;
+    settingsBody.appendChild(adminRow);
+    adminRow.querySelector("#settings-admin-link").addEventListener("click", () => {
+      settingsOverlay.classList.remove("active");
+      showScreen("admin");
+      renderAdminPanel();
+    });
   }
-  showScreen("admin");
-  await renderAdminPanel();
+
+  settingsOverlay.classList.add("active");
+});
+
+settingsClose.addEventListener("click", () => settingsOverlay.classList.remove("active"));
+settingsOverlay.addEventListener("click", e => {
+  if (e.target === settingsOverlay) settingsOverlay.classList.remove("active");
 });
 
 adminBack.addEventListener("click", () => {
