@@ -844,7 +844,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v8"; // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v10"; // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -1392,7 +1392,7 @@ async function renderSlots() {
         </div>
         <div class="slot-number">${i + 1}</div>`;
     } else {
-      // check unread
+      // check unread — read both new nested path and old flat path
       let unread = 0;
       try {
         const snap = await get(lettersRef(ME.uid, s.contactUid));
@@ -1400,6 +1400,15 @@ async function renderSlots() {
           const l = child.val();
           if (!l.read && l.from !== ME.uid) unread++;
         });
+        // also check old flat path
+        const [pa, pb] = sortedUids(ME.uid, s.contactUid);
+        const oldSnap = await get(ref(db, `chithi/letters/${pa}_${pb}`));
+        if (oldSnap.exists()) {
+          oldSnap.forEach(child => {
+            const l = child.val();
+            if (!l.read && l.from !== ME.uid) unread++;
+          });
+        }
       } catch(_) {}
 
       totalUnread += unread;
@@ -1450,15 +1459,31 @@ async function openThread(slotIdx, slot) {
 
 async function loadThreadLetters(slot) {
   threadLetters.innerHTML = "";
-  // Show debug info visibly in thread town area
-  const [a, b] = sortedUids(ME.uid, slot.contactUid);
-  threadTown.textContent = `uid:${(slot.contactUid||"MISSING").slice(0,8)}… path:${a.slice(0,6)}/${b.slice(0,6)}`;
+  // Restore town display (was overwritten by debug in previous version)
+  threadTown.textContent = slot.contactTown || "";
   console.log("[loadThread] ME.uid:", ME.uid, "contactUid:", slot.contactUid);
-  console.log("[loadThread] reading path: chithi/letters/" + a + "/" + b);
   try {
-    const snap = await get(lettersRef(ME.uid, slot.contactUid));
+    // Read from NEW nested path (chithi/letters/uidA/uidB)
+    const newSnap = await get(lettersRef(ME.uid, slot.contactUid));
     const letters = [];
-    snap.forEach(c => letters.push({ id: c.key, ...c.val() }));
+    newSnap.forEach(c => letters.push({ id: c.key, ...c.val() }));
+
+    // Also read OLD flat path (chithi/letters/uidA_uidB) to recover pre-restructure letters
+    const [pa, pb] = sortedUids(ME.uid, slot.contactUid);
+    const oldFlatRef = ref(db, `chithi/letters/${pa}_${pb}`);
+    try {
+      const oldSnap = await get(oldFlatRef);
+      if (oldSnap.exists()) {
+        oldSnap.forEach(c => {
+          // only add if not already present (dedup by key)
+          if (!letters.find(l => l.id === c.key)) {
+            letters.push({ id: c.key, ...c.val() });
+          }
+        });
+        console.log("[loadThread] found letters on OLD flat path — migrating display");
+      }
+    } catch(_) {}
+
     // sort by ts descending, keep only last MAX_LETTERS
     letters.sort((a, b) => b.ts - a.ts);
     letters.splice(MAX_LETTERS);
@@ -1468,43 +1493,58 @@ async function loadThreadLetters(slot) {
       return;
     }
 
+    // Mark all unread letters as read — fire-and-forget, don't block rendering
+    letters.forEach(letter => {
+      if (!letter.read && letter.from !== ME.uid) {
+        // Try new nested path first, then old flat path
+        letterNodeRef(ME.uid, slot.contactUid, letter.id);
+        update(letterNodeRef(ME.uid, slot.contactUid, letter.id), { read: true }).catch(() => {
+          // If new path fails, try old flat path
+          const [pa, pb] = sortedUids(ME.uid, slot.contactUid);
+          update(ref(db, `chithi/letters/${pa}_${pb}/${letter.id}`), { read: true }).catch(() => {});
+        });
+        letter.read = true;
+      }
+    });
+
+    // Render all letters — oldest first (reverse the descending sort)
+    letters.reverse();
+
     for (const letter of letters) {
-      const isMine  = letter.from === ME.uid;
+      const isMine   = letter.from === ME.uid;
       const isUnread = !letter.read && !isMine;
 
-      // auto-mark read
-      if (isUnread) {
-        try {
-          const lRef = letterNodeRef(ME.uid, slot.contactUid, letter.id);
-          await update(lRef, { read: true });
-          letter.read = true;
-        } catch(_) {}
-      }
-
+      // Build bubble purely with DOM methods — no innerHTML to avoid element wipe
       const bubble = document.createElement("div");
-      bubble.className = `letter-bubble${isUnread ? " unread" : ""}${isMine ? " mine" : ""}`;
+      bubble.className = `letter-bubble${isMine ? " mine" : ""}`;
+
+      const meta = document.createElement("div");
+      meta.className = "bubble-meta";
+
+      const fromSpan = document.createElement("span");
+      fromSpan.className = "bubble-from" + (isMine ? " mine-label" : "");
+      fromSpan.textContent = letter.fromName;
+
+      const timeSpan = document.createElement("span");
+      timeSpan.className = "bubble-time";
+      timeSpan.textContent = formatDate(letter.ts);
+
+      meta.appendChild(fromSpan);
+      meta.appendChild(timeSpan);
+      bubble.appendChild(meta);
 
       const body = document.createElement("div");
       body.className = "bubble-body collapsed";
       body.textContent = letter.body;
-
-      let expanded = false;
-
-      bubble.innerHTML = `
-        <div class="bubble-meta">
-          <span class="bubble-from ${isMine ? "mine-label" : ""}">${letter.fromName}</span>
-          <span class="bubble-time">${formatDate(letter.ts)}</span>
-        </div>`;
-
       bubble.appendChild(body);
 
       const footer = document.createElement("div");
       footer.className = "bubble-footer";
 
+      let expanded = false;
       const toggle = document.createElement("span");
       toggle.className = "read-toggle";
       toggle.textContent = "Read full letter";
-
       toggle.addEventListener("click", () => {
         expanded = !expanded;
         body.classList.toggle("collapsed", !expanded);
