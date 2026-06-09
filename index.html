@@ -844,7 +844,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v10"; // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v11"; // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -1392,22 +1392,30 @@ async function renderSlots() {
         </div>
         <div class="slot-number">${i + 1}</div>`;
     } else {
-      // check unread — read both new nested path and old flat path
+      // check unread — try all possible letter paths
       let unread = 0;
+      const seenIds = new Set();
       try {
-        const snap = await get(lettersRef(ME.uid, s.contactUid));
-        snap.forEach(child => {
-          const l = child.val();
-          if (!l.read && l.from !== ME.uid) unread++;
-        });
-        // also check old flat path
         const [pa, pb] = sortedUids(ME.uid, s.contactUid);
-        const oldSnap = await get(ref(db, `chithi/letters/${pa}_${pb}`));
-        if (oldSnap.exists()) {
-          oldSnap.forEach(child => {
-            const l = child.val();
-            if (!l.read && l.from !== ME.uid) unread++;
-          });
+        const unreadPaths = [
+          `chithi/letters/${pa}/${pb}`,
+          `chithi/letters/${pa}_${pb}`,
+          `chithi/letters/${ME.uid}_${s.contactUid}`,
+          `chithi/letters/${s.contactUid}_${ME.uid}`
+        ];
+        for (const path of unreadPaths) {
+          try {
+            const snap = await get(ref(db, path));
+            if (snap.exists()) {
+              snap.forEach(child => {
+                if (!seenIds.has(child.key)) {
+                  seenIds.add(child.key);
+                  const l = child.val();
+                  if (l && !l.read && l.from !== ME.uid) unread++;
+                }
+              });
+            }
+          } catch(_) {}
         }
       } catch(_) {}
 
@@ -1458,35 +1466,40 @@ async function openThread(slotIdx, slot) {
 }
 
 async function loadThreadLetters(slot) {
-  threadLetters.innerHTML = "";
-  // Restore town display (was overwritten by debug in previous version)
+  threadLetters.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:0.5rem">Loading…</div>';
   threadTown.textContent = slot.contactTown || "";
-  console.log("[loadThread] ME.uid:", ME.uid, "contactUid:", slot.contactUid);
   try {
-    // Read from NEW nested path (chithi/letters/uidA/uidB)
-    const newSnap = await get(lettersRef(ME.uid, slot.contactUid));
-    const letters = [];
-    newSnap.forEach(c => letters.push({ id: c.key, ...c.val() }));
-
-    // Also read OLD flat path (chithi/letters/uidA_uidB) to recover pre-restructure letters
     const [pa, pb] = sortedUids(ME.uid, slot.contactUid);
-    const oldFlatRef = ref(db, `chithi/letters/${pa}_${pb}`);
-    try {
-      const oldSnap = await get(oldFlatRef);
-      if (oldSnap.exists()) {
-        oldSnap.forEach(c => {
-          // only add if not already present (dedup by key)
-          if (!letters.find(l => l.id === c.key)) {
-            letters.push({ id: c.key, ...c.val() });
-          }
-        });
-        console.log("[loadThread] found letters on OLD flat path — migrating display");
-      }
-    } catch(_) {}
+    const letters = {};  // keyed by id to auto-dedup
 
-    // sort by ts descending, keep only last MAX_LETTERS
-    letters.sort((a, b) => b.ts - a.ts);
-    letters.splice(MAX_LETTERS);
+    // Path A: new nested  chithi/letters/uidA/uidB
+    // Path B: old flat    chithi/letters/uidA_uidB
+    // Path C: very old flat with different sort order
+    const pathsToTry = [
+      `chithi/letters/${pa}/${pb}`,
+      `chithi/letters/${pa}_${pb}`,
+      `chithi/letters/${ME.uid}_${slot.contactUid}`,
+      `chithi/letters/${slot.contactUid}_${ME.uid}`
+    ];
+
+    for (const path of pathsToTry) {
+      try {
+        const snap = await get(ref(db, path));
+        if (snap.exists()) {
+          snap.forEach(c => {
+            const v = c.val();
+            // only store if it looks like a letter object
+            if (v && v.body && v.ts) {
+              letters[c.key] = { id: c.key, _path: path, ...v };
+            }
+          });
+        }
+      } catch(_) {}
+    }
+
+    const letterList = Object.values(letters);
+    letterList.sort((a, b) => a.ts - b.ts); // oldest first
+    threadLetters.innerHTML = "";
 
     if (letters.length === 0) {
       threadLetters.innerHTML = '<div style="color:var(--muted);font-size:0.9rem;padding:1rem;text-align:center">No letters yet. Write the first one ✉️</div>';
