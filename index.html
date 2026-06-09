@@ -844,7 +844,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v2"; // bumped: letters path restructured to nested uid/uid
+  const CACHE_VERSION = "chithi-v6"; // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -1060,7 +1060,11 @@ async function getProfile(uid) {
 }
 
 async function getMySlots() {
-  const snap = await get(slotsRef(ME.uid));
+  return getSlotsOf(ME.uid);
+}
+
+async function getSlotsOf(uid) {
+  const snap = await get(slotsRef(uid));
   if (!snap.exists()) return Array(MAX_SLOTS).fill(null);
   const slots = Array(MAX_SLOTS).fill(null);
   snap.forEach(child => { slots[parseInt(child.key)] = child.val(); });
@@ -1308,19 +1312,56 @@ addContactBtn.addEventListener("click", async () => {
       return;
     }
 
-    await set(slotRef(ME.uid, emptyIdx), {
-      contactUid:   contact.uid,
-      contactCode:  code,
-      contactName:  label,
-      contactTown:  town,
-      addedAt:      Date.now(),
-      lastActivity: Date.now()
-    });
+    // check contact's slots for space (mutual linking requires a free slot on their side too)
+    const theirSlots = await getSlotsOf(contact.uid);
+    const alreadyHasMe = theirSlots.some(s => s && s.contactCode === ME.code);
+    const theirEmptyIdx = theirSlots.findIndex(s => s === null);
+
+    if (!alreadyHasMe && theirEmptyIdx === -1) {
+      addError.textContent = `${label}'s contact list is full. Ask them to free a slot first.`;
+      addContactBtn.disabled = false; addContactBtn.textContent = "Add Contact";
+      return;
+    }
+
+    const now = Date.now();
+
+    // Build one atomic multi-path update — both slots written in a single round-trip
+    // If either write fails the whole operation fails cleanly
+    // Multi-path atomic update under /chithi (not root "/", which rules don't cover)
+    // Keys are relative to the ref passed to update()
+    const atomicWrite = {
+      [`users/${ME.uid}/slots/${emptyIdx}`]: {
+        contactUid:   contact.uid,
+        contactCode:  code,
+        contactName:  label,
+        contactTown:  town,
+        addedAt:      now,
+        lastActivity: now
+      }
+    };
+
+    // Only write their slot if they don't already have me
+    if (!alreadyHasMe) {
+      atomicWrite[`users/${contact.uid}/slots/${theirEmptyIdx}`] = {
+        contactUid:   ME.uid,
+        contactCode:  ME.code,
+        contactName:  ME.displayName,
+        contactTown:  "",
+        addedAt:      now,
+        lastActivity: now
+      };
+    }
+
+    // update() scoped to /chithi — paths above are relative to this ref
+    await update(ref(db, "chithi"), atomicWrite);
 
     addCodeInput.value = "";
     addLabelInput.value = "";
     addTownInput.value = "";
-    showToast(`${label} added to slot ${emptyIdx + 1} ✅`);
+    const mutualMsg = alreadyHasMe
+      ? `${label} added ✅`
+      : `${label} added ✅ — they can see you too`;
+    showToast(mutualMsg);
     renderSlots();
   } catch (e) {
     console.error("[addContact] error:", e);
