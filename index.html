@@ -844,7 +844,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v1"; // ← bump this (e.g. v2, v3) each time you edit index.html
+  const CACHE_VERSION = "chithi-v2"; // bumped: letters path restructured to nested uid/uid
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -1354,8 +1354,7 @@ async function renderSlots() {
       // check unread
       let unread = 0;
       try {
-        const q    = query(lettersRef(ME.uid, s.contactUid), orderByChild("ts"), limitToLast(MAX_LETTERS));
-        const snap = await get(q);
+        const snap = await get(lettersRef(ME.uid, s.contactUid));
         snap.forEach(child => {
           const l = child.val();
           if (!l.read && l.from !== ME.uid) unread++;
@@ -1411,11 +1410,12 @@ async function openThread(slotIdx, slot) {
 async function loadThreadLetters(slot) {
   threadLetters.innerHTML = "";
   try {
-    const q    = query(lettersRef(ME.uid, slot.contactUid), orderByChild("ts"), limitToLast(MAX_LETTERS));
-    const snap = await get(q);
+    const snap = await get(lettersRef(ME.uid, slot.contactUid));
     const letters = [];
     snap.forEach(c => letters.push({ id: c.key, ...c.val() }));
-    letters.reverse();
+    // sort by ts descending, keep only last MAX_LETTERS
+    letters.sort((a, b) => b.ts - a.ts);
+    letters.splice(MAX_LETTERS);
 
     if (letters.length === 0) {
       threadLetters.innerHTML = '<div style="color:var(--muted);font-size:0.9rem;padding:1rem;text-align:center">No letters yet. Write the first one ✉️</div>';
@@ -1528,14 +1528,14 @@ threadSend.addEventListener("click", async () => {
 
   try {
     const lRef   = lettersRef(ME.uid, activeContactSlot.contactUid);
-    const q      = query(lRef, orderByChild("ts"), limitToLast(MAX_LETTERS));
-    const snap   = await get(q);
+    // Get all letters client-side (max 10) — avoids needing a Firebase .indexOn rule
+    const capSnap = await get(lRef);
     const existing = [];
-    snap.forEach(c => existing.push({ id: c.key, ts: c.val().ts }));
+    capSnap.forEach(c => existing.push({ id: c.key, ts: c.val().ts }));
 
     // enforce cap: delete oldest if at limit
     if (existing.length >= MAX_LETTERS) {
-      existing.sort((a,b) => a.ts - b.ts);
+      existing.sort((a, b) => a.ts - b.ts);
       const toDelete = existing.slice(0, existing.length - MAX_LETTERS + 1);
       for (const old of toDelete) {
         await remove(letterNodeRef(ME.uid, activeContactSlot.contactUid, old.id));
@@ -1558,7 +1558,8 @@ threadSend.addEventListener("click", async () => {
     showToast("Letter sent ✉️");
     await loadThreadLetters(activeContactSlot);
   } catch(e) {
-    showToast("Failed to send. Try again.");
+    console.error("[send]", e.code, e.message);
+    showToast("Failed to send: " + (e.message || e.code || "unknown error"));
   }
 
   threadSend.disabled = false; threadSend.textContent = "Send ✉️";
@@ -1593,11 +1594,12 @@ threadLeaveBtn.addEventListener("click", () => {
 });
 
 async function exportAllLetters(slot) {
-  const q    = query(lettersRef(ME.uid, slot.contactUid), orderByChild("ts"), limitToLast(MAX_LETTERS));
-  const snap = await get(q);
+  const snap = await get(lettersRef(ME.uid, slot.contactUid));
+  const allLetters = [];
+  snap.forEach(c => allLetters.push(c.val()));
+  allLetters.sort((a, b) => a.ts - b.ts);
   const lines = [`ਚਿੱਠੀ · Chithi — Full History with ${slot.contactName}`, ""];
-  snap.forEach(c => {
-    const l = c.val();
+  allLetters.forEach(l => {
     lines.push(`[${formatDate(l.ts)}] ${l.fromName}:`);
     lines.push(l.body);
     lines.push("");
