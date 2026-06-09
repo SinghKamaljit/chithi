@@ -694,7 +694,11 @@
       <label class="field-label">Email</label>
       <input type="email" id="signup-email" placeholder="your@email.com" autocomplete="email" />
       <label class="field-label">Password</label>
-      <input type="password" id="signup-pass" placeholder="Min 6 characters" autocomplete="new-password" />
+      <div style="position:relative;margin-bottom:0">
+        <input type="password" id="signup-pass" placeholder="Min 6 characters" autocomplete="new-password" style="margin-bottom:0;padding-right:3rem" />
+        <button type="button" id="toggle-signup-pass" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--muted);width:auto;padding:0">👁</button>
+      </div>
+      <div style="height:0.75rem"></div>
       <label class="field-label">Your name</label>
       <input type="text" id="signup-name" placeholder="e.g. Gurpreet Kaur" maxlength="30" />
       <label class="field-label">Invite code</label>
@@ -1055,14 +1059,25 @@ async function getMySlots() {
 }
 
 async function findCodeOwner(code) {
-  // look up public code index — single fast read, no permission issues
   const cleanCode = code.toUpperCase().trim();
-  const uidSnap = await get(codeIndexRef(cleanCode));
-  if (!uidSnap.exists()) return null;
-  const uid = uidSnap.val();
-  const profile = await getProfile(uid);
-  if (!profile) return null;
-  return { uid, ...profile };
+  console.log("[findCodeOwner] looking up:", cleanCode);
+  try {
+    const snap = await get(codeIndexRef(cleanCode));
+    if (!snap.exists()) {
+      console.warn("[findCodeOwner] no entry in /chithi/codes/ for:", cleanCode);
+      return null;
+    }
+    const data = snap.val();
+    console.log("[findCodeOwner] found:", data);
+    if (!data || !data.uid) {
+      console.warn("[findCodeOwner] entry exists but uid missing:", data);
+      return null;
+    }
+    return data;
+  } catch(e) {
+    console.error("[findCodeOwner] permission or network error:", e.code, e.message);
+    throw e; // re-throw so add-contact shows the real error
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -1091,9 +1106,23 @@ onAuthStateChanged(auth, async user => {
       createdAt:   Date.now()
     };
     await set(profileRef(user.uid), profile);
-    await set(codeIndexRef(profile.code), user.uid); // public code → uid index
+    // Store name+code in public index — avoids needing to read another user's private profile
+    await set(codeIndexRef(profile.code), { uid: user.uid, displayName: profile.displayName, code: profile.code });
   }
   ME = { uid: user.uid, email: user.email, ...profile };
+
+  // Always re-write code index on login — heals existing accounts that predate the index
+  // This is idempotent and cheap (single write)
+  try {
+    await set(codeIndexRef(ME.code), {
+      uid:         ME.uid,
+      displayName: ME.displayName,
+      code:        ME.code
+    });
+  } catch(e) {
+    console.warn("Could not write code index:", e.message);
+  }
+
   myCodeDisplay.textContent = ME.code;
   showScreen("app");
   renderSlots();
@@ -1172,6 +1201,13 @@ document.getElementById("toggle-pass").addEventListener("click", () => {
   const isHidden = authPass.type === "password";
   authPass.type = isHidden ? "text" : "password";
   document.getElementById("toggle-pass").textContent = isHidden ? "🙈" : "👁";
+});
+
+document.getElementById("toggle-signup-pass").addEventListener("click", () => {
+  const sp = document.getElementById("signup-pass");
+  const isHidden = sp.type === "password";
+  sp.type = isHidden ? "text" : "password";
+  document.getElementById("toggle-signup-pass").textContent = isHidden ? "🙈" : "👁";
 });
 
 signoutBtn.addEventListener("click", () => signOut(auth));
@@ -1268,6 +1304,7 @@ addContactBtn.addEventListener("click", async () => {
     showToast(`${label} added to slot ${emptyIdx + 1} ✅`);
     renderSlots();
   } catch (e) {
+    console.error("[addContact] error:", e);
     addError.textContent = "Failed: " + (e.message || e.code || "unknown error");
   }
 
@@ -1590,7 +1627,8 @@ async function leavChithi() {
     for (const s of slots) {
       if (s) await remove(lettersRef(ME.uid, s.contactUid));
     }
-    // delete my user node
+    // delete my user node and code index
+    await remove(codeIndexRef(ME.code));
     await remove(userRef(ME.uid));
     await signOut(auth);
     showToast("You've left Chithi. Goodbye 🙏");
