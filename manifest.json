@@ -3,22 +3,23 @@
   "short_name": "Chithi",
   "description": "Private letters for the ones you love",
   "start_url": "/chithi/",
+  "scope": "/chithi/",
   "display": "standalone",
-  "background_color": "#f7f0e6",
+  "background_color": "#b5541a",
   "theme_color": "#b5541a",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='38' fill='%23b5541a'/%3E%3Crect x='28' y='56' width='136' height='96' rx='8' fill='none' stroke='%23fff' stroke-width='8'/%3E%3Cpath d='M28 72l68 52 68-52' fill='none' stroke='%23fff' stroke-width='8'/%3E%3C/svg%3E",
+      "src": "icon-192.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%23b5541a'/%3E%3Crect x='72' y='148' width='368' height='256' rx='18' fill='none' stroke='%23fff' stroke-width='20'/%3E%3Cpath d='M72 192l184 140 184-140' fill='none' stroke='%23fff' stroke-width='20'/%3E%3C/svg%3E",
+      "src": "icon-192.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }
