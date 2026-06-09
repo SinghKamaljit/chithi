@@ -361,6 +361,7 @@
       flex-direction: column;
       min-height: 100vh;
       background: var(--paper);
+      overflow-y: auto;
     }
 
     #thread-view.active { display: flex; }
@@ -393,12 +394,10 @@
     #thread-actions { margin-left: auto; display: flex; gap: 0.5rem; }
 
     #thread-letters {
-      flex: 1;
       padding: 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.85rem;
-      overflow-y: auto;
     }
 
     .letter-bubble {
@@ -469,9 +468,6 @@
       background: #fff;
       border-bottom: 2px solid var(--border);
       padding: 1rem;
-      position: sticky;
-      top: 64px; /* below the sticky thread-header */
-      z-index: 50;
     }
 
     #thread-compose textarea {
@@ -857,7 +853,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v14"; // compose on top, badge scroll+flash, PWA manifest // newest-first, badge scroll, refresh button, auto-refresh // fixed: letters object/array confusion // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v15"; // natural flow: no sticky compose overlap // compose on top, badge scroll+flash, PWA manifest // newest-first, badge scroll, refresh button, auto-refresh // fixed: letters object/array confusion // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
