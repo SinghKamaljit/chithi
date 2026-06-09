@@ -844,7 +844,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v6"; // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v7"; // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -1450,6 +1450,9 @@ async function openThread(slotIdx, slot) {
 
 async function loadThreadLetters(slot) {
   threadLetters.innerHTML = "";
+  console.log("[loadThread] ME.uid:", ME.uid, "contactUid:", slot.contactUid);
+  const [a, b] = sortedUids(ME.uid, slot.contactUid);
+  console.log("[loadThread] reading path: chithi/letters/" + a + "/" + b);
   try {
     const snap = await get(lettersRef(ME.uid, slot.contactUid));
     const letters = [];
@@ -1520,10 +1523,13 @@ async function loadThreadLetters(slot) {
     // update lastActivity on my slot
     try {
       await update(slotRef(ME.uid, activeContactSlot.slotIdx), { lastActivity: Date.now() });
-    } catch(_) {}
+    } catch(e) {
+      console.warn("[lastActivity update] failed:", e.code, e.message);
+    }
 
   } catch(e) {
-    threadLetters.innerHTML = '<div style="color:#c0392b;font-size:0.85rem;padding:0.5rem">Failed to load letters.</div>';
+    console.error("[loadThreadLetters] error:", e.code, e.message);
+    threadLetters.innerHTML = `<div style="color:#c0392b;font-size:0.85rem;padding:0.5rem">Failed to load: ${e.message || e.code}</div>`;
   }
 }
 
@@ -1599,7 +1605,7 @@ threadSend.addEventListener("click", async () => {
     showToast("Letter sent ✉️");
     await loadThreadLetters(activeContactSlot);
   } catch(e) {
-    console.error("[send]", e.code, e.message);
+    console.error("[send] full error:", e);
     showToast("Failed to send: " + (e.message || e.code || "unknown error"));
   }
 
