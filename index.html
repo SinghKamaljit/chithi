@@ -844,7 +844,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v7"; // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v8"; // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -1450,8 +1450,10 @@ async function openThread(slotIdx, slot) {
 
 async function loadThreadLetters(slot) {
   threadLetters.innerHTML = "";
-  console.log("[loadThread] ME.uid:", ME.uid, "contactUid:", slot.contactUid);
+  // Show debug info visibly in thread town area
   const [a, b] = sortedUids(ME.uid, slot.contactUid);
+  threadTown.textContent = `uid:${(slot.contactUid||"MISSING").slice(0,8)}… path:${a.slice(0,6)}/${b.slice(0,6)}`;
+  console.log("[loadThread] ME.uid:", ME.uid, "contactUid:", slot.contactUid);
   console.log("[loadThread] reading path: chithi/letters/" + a + "/" + b);
   try {
     const snap = await get(lettersRef(ME.uid, slot.contactUid));
