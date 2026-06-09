@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>ਚਿੱਠੀ · Chithi</title>
+  <meta name="description" content="Chithi — private letters for the ones you love" />
+  <meta name="theme-color" content="#b5541a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Chithi" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='38' fill='%23b5541a'/%3E%3Crect x='28' y='56' width='136' height='96' rx='8' fill='none' stroke='%23fff' stroke-width='8'/%3E%3Cpath d='M28 72l68 52 68-52' fill='none' stroke='%23fff' stroke-width='8'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -459,8 +467,11 @@
     /* Write area in thread */
     #thread-compose {
       background: #fff;
-      border-top: 2px solid var(--border);
+      border-bottom: 2px solid var(--border);
       padding: 1rem;
+      position: sticky;
+      top: 64px; /* below the sticky thread-header */
+      z-index: 50;
     }
 
     #thread-compose textarea {
@@ -788,16 +799,16 @@
     </div>
   </div>
 
-  <div id="thread-letters">
-    <!-- letter bubbles injected here -->
-  </div>
-
   <div id="thread-compose">
     <textarea id="compose-body" placeholder="Write your letter…" maxlength="9999"></textarea>
     <div class="compose-footer">
       <span id="word-count">0 / 500 words</span>
       <button class="btn btn-primary" id="thread-send">Send ✉️</button>
     </div>
+  </div>
+
+  <div id="thread-letters">
+    <!-- letter bubbles injected here -->
   </div>
 </div>
 
@@ -846,7 +857,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v13"; // newest-first, badge scroll, refresh button, auto-refresh // fixed: letters object/array confusion // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v14"; // compose on top, badge scroll+flash, PWA manifest // newest-first, badge scroll, refresh button, auto-refresh // fixed: letters object/array confusion // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -1241,12 +1252,18 @@ signoutBtn.addEventListener("click", () => signOut(auth));
 // BADGE CLICK — scroll to first unread slot
 // ─────────────────────────────────────────────
 unreadBadge.addEventListener("click", () => {
-  // find first slot card that has an unread dot
-  const firstUnread = slotsGrid.querySelector(".letter-bubble.unread, .unread-dot");
-  if (firstUnread) {
-    firstUnread.closest(".slot-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  // Find first slot card containing an unread dot and scroll to it
+  const allCards = slotsGrid.querySelectorAll(".slot-card");
+  let found = null;
+  for (const card of allCards) {
+    if (card.querySelector(".unread-dot")) { found = card; break; }
+  }
+  if (found) {
+    found.scrollIntoView({ behavior: "smooth", block: "center" });
+    // Flash the card briefly to draw attention
+    found.style.outline = "2px solid var(--rust)";
+    setTimeout(() => found.style.outline = "", 1200);
   } else {
-    // fallback: just scroll slots into view
     slotsGrid.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 });
