@@ -1031,18 +1031,27 @@ function generateCode(name) {
 // ─────────────────────────────────────────────
 // /chithi/users/{uid}/profile   → { code, displayName, email, createdAt }
 // /chithi/users/{uid}/slots/{0..9} → { contactUid, contactName, contactTown, addedAt, lastActivity }
-// /chithi/letters/{uid_a}_{uid_b}/{letterId} → { from, fromName, body, ts, read }
-// (uid_a < uid_b always, to form a canonical pair key)
+// /chithi/letters/{uidA}/{uidB}/{letterId} → { from, fromName, body, ts, read }
+// uidA and uidB are always sorted alphabetically so each pair has one canonical path.
+// Two-level path lets Firebase rules check $uidA === auth.uid || $uidB === auth.uid natively.
 
-function pairKey(uid1, uid2) {
-  return [uid1, uid2].sort().join("_");
+function sortedUids(uid1, uid2) {
+  return [uid1, uid2].sort(); // returns [smaller, larger]
 }
 
 function userRef(uid)    { return ref(db, `chithi/users/${uid}`); }
 function profileRef(uid) { return ref(db, `chithi/users/${uid}/profile`); }
 function slotsRef(uid)   { return ref(db, `chithi/users/${uid}/slots`); }
 function slotRef(uid, i) { return ref(db, `chithi/users/${uid}/slots/${i}`); }
-function lettersRef(uid1, uid2) { return ref(db, `chithi/letters/${pairKey(uid1, uid2)}`); }
+function lettersRef(uid1, uid2) {
+  const [a, b] = sortedUids(uid1, uid2);
+  return ref(db, `chithi/letters/${a}/${b}`);
+}
+// For direct letter node access (mark-read, delete)
+function letterNodeRef(uid1, uid2, letterId) {
+  const [a, b] = sortedUids(uid1, uid2);
+  return ref(db, `chithi/letters/${a}/${b}/${letterId}`);
+}
 function codeIndexRef(code) { return ref(db, `chithi/codes/${code}`); }
 
 async function getProfile(uid) {
@@ -1067,16 +1076,31 @@ async function findCodeOwner(code) {
       console.warn("[findCodeOwner] no entry in /chithi/codes/ for:", cleanCode);
       return null;
     }
-    const data = snap.val();
-    console.log("[findCodeOwner] found:", data);
-    if (!data || !data.uid) {
-      console.warn("[findCodeOwner] entry exists but uid missing:", data);
+    const val = snap.val();
+    console.log("[findCodeOwner] raw value:", val, typeof val);
+
+    // Handle both formats: new = plain uid string, old = object with uid property
+    let uid;
+    if (typeof val === "string") {
+      uid = val;
+    } else if (val && typeof val === "object" && typeof val.uid === "string") {
+      uid = val.uid;
+    } else {
+      console.warn("[findCodeOwner] unrecognised format:", val);
       return null;
     }
-    return data;
+
+    // Now fetch the profile using the resolved uid string
+    const profileSnap = await get(profileRef(uid));
+    if (!profileSnap.exists()) {
+      console.warn("[findCodeOwner] profile missing for uid:", uid);
+      return null;
+    }
+    return { uid, ...profileSnap.val() };
+
   } catch(e) {
-    console.error("[findCodeOwner] permission or network error:", e.code, e.message);
-    throw e; // re-throw so add-contact shows the real error
+    console.error("[findCodeOwner] error:", e.code, e.message);
+    throw e;
   }
 }
 
@@ -1106,19 +1130,14 @@ onAuthStateChanged(auth, async user => {
       createdAt:   Date.now()
     };
     await set(profileRef(user.uid), profile);
-    // Store name+code in public index — avoids needing to read another user's private profile
-    await set(codeIndexRef(profile.code), { uid: user.uid, displayName: profile.displayName, code: profile.code });
+    // Store uid string in public code index (simple string, no object format mismatch)
+    await set(codeIndexRef(profile.code), user.uid);
   }
   ME = { uid: user.uid, email: user.email, ...profile };
 
   // Always re-write code index on login — heals existing accounts that predate the index
-  // This is idempotent and cheap (single write)
   try {
-    await set(codeIndexRef(ME.code), {
-      uid:         ME.uid,
-      displayName: ME.displayName,
-      code:        ME.code
-    });
+    await set(codeIndexRef(ME.code), ME.uid);
   } catch(e) {
     console.warn("Could not write code index:", e.message);
   }
@@ -1410,7 +1429,7 @@ async function loadThreadLetters(slot) {
       // auto-mark read
       if (isUnread) {
         try {
-          const lRef = ref(db, `chithi/letters/${pairKey(ME.uid, slot.contactUid)}/${letter.id}`);
+          const lRef = letterNodeRef(ME.uid, slot.contactUid, letter.id);
           await update(lRef, { read: true });
           letter.read = true;
         } catch(_) {}
@@ -1519,7 +1538,7 @@ threadSend.addEventListener("click", async () => {
       existing.sort((a,b) => a.ts - b.ts);
       const toDelete = existing.slice(0, existing.length - MAX_LETTERS + 1);
       for (const old of toDelete) {
-        await remove(ref(db, `chithi/letters/${pairKey(ME.uid, activeContactSlot.contactUid)}/${old.id}`));
+        await remove(letterNodeRef(ME.uid, activeContactSlot.contactUid, old.id));
       }
     }
 
@@ -1776,7 +1795,7 @@ async function renderAdminPanel() {
               [
                 { label: "Free slot", cls: "btn-danger", action: async () => {
                     try {
-                      await remove(ref(db, `chithi/letters/${pairKey(targetUid, contactUid)}`));
+                      await remove(lettersRef(targetUid, contactUid));
                       await remove(ref(db, `chithi/users/${targetUid}/slots/${slotIndex}`));
                       showToast("Slot freed ✅");
                       renderAdminPanel();
