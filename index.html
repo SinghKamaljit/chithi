@@ -853,7 +853,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v18"; // admin panel: reads via codes index, no broad user read // force-free: all paths + reverse slot removal // real SVG icon file, no Chrome badge // natural flow: no sticky compose overlap // compose on top, badge scroll+flash, PWA manifest // newest-first, badge scroll, refresh button, auto-refresh // fixed: letters object/array confusion // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v19";
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -2024,8 +2024,13 @@ async function renderAdminPanel() {
     });
 
   } catch(e) {
-    console.error("[renderAdminPanel]", e);
-    adminBody.innerHTML = `<div style="color:#c0392b;padding:1rem">Failed to load admin data: ${e.message || e.code}</div>`;
+    console.error("[renderAdminPanel] full error:", e);
+    const reason = e.message || e.code || String(e) || "unknown";
+    adminBody.innerHTML = `<div style="color:#c0392b;padding:1rem;font-size:0.85rem">
+      <strong>Postmaster Panel failed to load.</strong><br><br>
+      Reason: <code>${reason}</code><br><br>
+      <small>Check Firebase rules — admin needs read access to chithi/codes and chithi/users/$uid/profile + slots</small>
+    </div>`;
   }
 }
 
