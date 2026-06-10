@@ -39,15 +39,10 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ════════════════════════════════════════
-       SCREENS
-    ════════════════════════════════════════ */
     .screen { display: none; min-height: 100vh; }
     .screen.active { display: flex; flex-direction: column; }
 
-    /* ════════════════════════════════════════
-       AUTH SCREEN
-    ════════════════════════════════════════ */
+    /* AUTH */
     #screen-auth {
       align-items: center;
       justify-content: center;
@@ -55,281 +50,140 @@
       background: var(--cream);
     }
 
-    .auth-brand {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
-
+    .auth-brand { text-align: center; margin-bottom: 2.5rem; }
     .auth-brand .gurmukhi {
-      font-size: 2.8rem;
-      color: var(--rust);
-      letter-spacing: 0.02em;
-      line-height: 1;
-      display: block;
+      font-size: 2.8rem; color: var(--rust);
+      letter-spacing: 0.02em; line-height: 1; display: block;
     }
-
     .auth-brand .roman {
-      font-family: 'Lora', serif;
-      font-style: italic;
-      font-size: 1.1rem;
-      color: var(--muted);
-      margin-top: 0.3rem;
-      display: block;
+      font-family: 'Lora', serif; font-style: italic;
+      font-size: 1.1rem; color: var(--muted);
+      margin-top: 0.3rem; display: block;
     }
-
     .auth-brand .tagline {
-      font-size: 0.82rem;
-      color: var(--muted);
-      margin-top: 0.6rem;
-      letter-spacing: 0.04em;
+      font-size: 0.82rem; color: var(--muted);
+      margin-top: 0.6rem; letter-spacing: 0.04em;
     }
 
     .auth-card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 2rem 1.75rem;
-      width: 100%;
-      max-width: 360px;
-      box-shadow: var(--card-sh);
-      border: 1px solid var(--border);
+      background: #fff; border-radius: 20px;
+      padding: 2rem 1.75rem; width: 100%; max-width: 360px;
+      box-shadow: var(--card-sh); border: 1px solid var(--border);
     }
 
     .field-label {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 0.35rem;
-      display: block;
+      font-size: 0.75rem; font-weight: 500; color: var(--muted);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 0.35rem; display: block;
     }
 
-    input[type="email"],
-    input[type="password"],
-    input[type="text"],
-    textarea {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      font-size: 0.97rem;
-      font-family: 'DM Sans', sans-serif;
-      background: var(--paper);
-      color: var(--ink);
-      outline: none;
-      transition: border-color 0.2s;
-      margin-bottom: 1rem;
+    input[type="email"], input[type="password"], input[type="text"], textarea {
+      width: 100%; padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-size: 0.97rem; font-family: 'DM Sans', sans-serif;
+      background: var(--paper); color: var(--ink);
+      outline: none; transition: border-color 0.2s; margin-bottom: 1rem;
     }
-
     input:focus, textarea:focus { border-color: var(--sepia); }
 
     .btn {
-      display: block;
-      width: 100%;
-      padding: 0.85rem 1rem;
-      border: none;
-      border-radius: 12px;
-      font-size: 0.97rem;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-      text-align: center;
+      display: block; width: 100%; padding: 0.85rem 1rem;
+      border: none; border-radius: 12px; font-size: 0.97rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      cursor: pointer; transition: opacity 0.2s, transform 0.1s; text-align: center;
     }
-
     .btn:active { transform: scale(0.98); }
     .btn:disabled { opacity: 0.55; pointer-events: none; }
-
     .btn-primary { background: var(--rust); color: #fff; }
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1.5px solid var(--border);
-      margin-top: 0.6rem;
-    }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1.5px solid var(--border); margin-top: 0.6rem; }
     .btn-danger { background: #c0392b; color: #fff; }
     .btn-safe   { background: var(--safe); color: #fff; }
-    .btn-sm {
-      width: auto;
-      display: inline-block;
-      padding: 0.4rem 0.9rem;
-      font-size: 0.82rem;
-      border-radius: 8px;
-    }
+    .btn-sm { width: auto; display: inline-block; padding: 0.4rem 0.9rem; font-size: 0.82rem; border-radius: 8px; }
 
-    .error-msg {
-      color: #c0392b;
-      font-size: 0.83rem;
-      margin-top: 0.4rem;
-      min-height: 1.2em;
-      text-align: center;
-    }
+    .error-msg { color: #c0392b; font-size: 0.83rem; margin-top: 0.4rem; min-height: 1.2em; text-align: center; }
 
-    /* ════════════════════════════════════════
-       APP HEADER
-    ════════════════════════════════════════ */
+    /* HEADER */
     #app-header {
-      background: var(--rust);
-      color: #fff;
+      background: var(--rust); color: #fff;
       padding: 0.9rem 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
       box-shadow: 0 2px 12px rgba(181,84,26,0.3);
     }
-
-    .header-brand {
-      display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
-    }
-
+    .header-brand { display: flex; align-items: baseline; gap: 0.5rem; }
     .header-brand .g { font-size: 1.4rem; line-height: 1; }
-    .header-brand .r {
-      font-family: 'Lora', serif;
-      font-style: italic;
-      font-size: 0.9rem;
-      opacity: 0.85;
-    }
-
+    .header-brand .r { font-family: 'Lora', serif; font-style: italic; font-size: 0.9rem; opacity: 0.85; }
     #unread-badge {
-      cursor: pointer;
-      background: #fff;
-      color: var(--rust);
-      font-weight: 700;
-      font-size: 0.72rem;
-      border-radius: 999px;
-      padding: 0.12rem 0.5rem;
-      margin-left: 0.3rem;
+      cursor: pointer; background: #fff; color: var(--rust);
+      font-weight: 700; font-size: 0.72rem; border-radius: 999px;
+      padding: 0.12rem 0.5rem; margin-left: 0.3rem;
     }
-
     .header-actions { display: flex; align-items: center; gap: 0.6rem; }
-
     .icon-btn {
-      background: rgba(255,255,255,0.18);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      padding: 0.4rem 0.6rem;
-      font-size: 1rem;
-      cursor: pointer;
-      line-height: 1;
+      background: rgba(255,255,255,0.18); border: none; border-radius: 8px;
+      color: #fff; padding: 0.4rem 0.6rem; font-size: 1rem; cursor: pointer; line-height: 1;
     }
 
-    /* ════════════════════════════════════════
-       TABS
-    ════════════════════════════════════════ */
+    /* TABS */
     #tabs {
-      display: flex;
-      background: #fff;
+      display: flex; background: #fff;
       border-bottom: 2px solid var(--border);
-      position: sticky;
-      top: 52px;
-      z-index: 99;
+      position: sticky; top: 52px; z-index: 99;
     }
-
     .tab {
-      flex: 1;
-      padding: 0.8rem 0.5rem;
-      text-align: center;
-      font-size: 0.88rem;
-      font-weight: 500;
-      color: var(--muted);
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
+      flex: 1; padding: 0.8rem 0.5rem; text-align: center;
+      font-size: 0.88rem; font-weight: 500; color: var(--muted);
+      border: none; background: transparent; cursor: pointer;
+      border-bottom: 3px solid transparent; transition: all 0.2s;
       font-family: 'DM Sans', sans-serif;
     }
-
     .tab.active { color: var(--rust); border-bottom-color: var(--rust); }
 
-    /* ════════════════════════════════════════
-       PANELS
-    ════════════════════════════════════════ */
+    /* PANELS */
     .panel { display: none; padding: 1.1rem; flex: 1; }
     .panel.active { display: block; }
 
-    /* ════════════════════════════════════════
-       CONTACTS PANEL
-    ════════════════════════════════════════ */
+    /* CONTACTS PANEL */
     .section-head {
-      font-size: 0.75rem;
-      font-weight: 500;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.75rem;
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.75rem;
     }
 
     .my-code-box {
-      background: #fff;
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      padding: 1rem 1.1rem;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: #fff; border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
     }
-
     .my-code-box .label { font-size: 0.78rem; color: var(--muted); }
     .my-code-box .code {
-      font-family: 'Lora', serif;
-      font-size: 1.3rem;
-      color: var(--rust);
-      letter-spacing: 0.06em;
-      font-weight: 600;
+      font-family: 'Lora', serif; font-size: 1.3rem;
+      color: var(--rust); letter-spacing: 0.06em; font-weight: 600;
     }
 
     .copy-btn {
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.35rem 0.75rem;
-      font-size: 0.78rem;
-      color: var(--muted);
-      cursor: pointer;
+      background: var(--paper); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.35rem 0.75rem;
+      font-size: 0.78rem; color: var(--muted); cursor: pointer;
       font-family: 'DM Sans', sans-serif;
     }
 
     .add-contact-box {
-      background: #fff;
-      border: 1.5px dashed var(--border);
-      border-radius: 14px;
-      padding: 1rem 1.1rem;
-      margin-bottom: 1.25rem;
+      background: #fff; border: 1.5px dashed var(--border);
+      border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 1.25rem;
     }
-
     .add-contact-box input { margin-bottom: 0.5rem; }
 
     .slots-grid { display: flex; flex-direction: column; gap: 0.7rem; }
 
     .slot-card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 1rem 1.1rem;
-      box-shadow: var(--card-sh);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      transition: box-shadow 0.2s;
-      position: relative;
+      background: #fff; border-radius: 14px; padding: 1rem 1.1rem;
+      box-shadow: var(--card-sh); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; transition: box-shadow 0.2s; position: relative;
     }
-
     .slot-card:active { box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-
-    .slot-card.empty {
-      opacity: 0.5;
-      cursor: default;
-      background: var(--paper);
-    }
+    .slot-card.empty { opacity: 0.5; cursor: default; background: var(--paper); }
 
     .slot-info { flex: 1; }
     .slot-name { font-weight: 600; font-size: 0.97rem; color: var(--ink); }
@@ -339,341 +193,190 @@
     .slot-right { display: flex; align-items: center; gap: 0.5rem; }
 
     .unread-dot {
-      width: 9px; height: 9px;
-      border-radius: 50%;
-      background: var(--rust);
-      flex-shrink: 0;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--rust); flex-shrink: 0;
     }
 
-    .slot-number {
-      font-size: 0.72rem;
-      color: var(--border);
-      font-weight: 600;
-      min-width: 1.2rem;
-      text-align: right;
-    }
+    .slot-number { font-size: 0.72rem; color: var(--border); font-weight: 600; min-width: 1.2rem; text-align: right; }
 
-    /* ════════════════════════════════════════
-       THREAD VIEW (letters with a contact)
-    ════════════════════════════════════════ */
+    .pen-btn {
+      background: var(--paper); border: 1px solid var(--border);
+      border-radius: 7px; padding: 0.25rem 0.45rem;
+      font-size: 0.85rem; line-height: 1; cursor: pointer;
+      color: var(--rust); transition: background 0.15s;
+    }
+    .pen-btn:active { background: var(--border); }
+
+    /* HISTORY PANEL */
+    .history-card {
+      background: #fff; border-radius: 14px; padding: 1rem 1.1rem;
+      box-shadow: var(--card-sh); border: 1px solid var(--border);
+      border-left: 4px solid var(--sepia);
+      cursor: pointer; transition: box-shadow 0.2s; margin-bottom: 0.75rem;
+    }
+    .history-card:active { box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .history-card-top {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.4rem;
+    }
+    .history-contact { font-weight: 600; font-size: 0.88rem; color: var(--rust); }
+    .history-time { font-size: 0.72rem; color: var(--muted); }
+    .history-snippet {
+      font-family: 'Lora', serif; font-size: 0.88rem; color: var(--ink);
+      line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .history-from { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.3rem; }
+
+    /* THREAD VIEW */
     #thread-view {
-      display: none;
-      flex-direction: column;
-      min-height: 100vh;
-      background: var(--paper);
-      overflow-y: auto;
+      display: none; flex-direction: column;
+      min-height: 100vh; background: var(--paper); overflow-y: auto;
     }
-
     #thread-view.active { display: flex; }
 
     #thread-header {
-      background: var(--rust);
-      color: #fff;
+      background: var(--rust); color: #fff;
       padding: 0.9rem 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      display: flex; align-items: center; gap: 0.75rem;
+      position: sticky; top: 0; z-index: 100;
     }
-
     #thread-back {
-      background: rgba(255,255,255,0.18);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      padding: 0.4rem 0.7rem;
-      font-size: 1rem;
-      cursor: pointer;
+      background: rgba(255,255,255,0.18); border: none; border-radius: 8px;
+      color: #fff; padding: 0.4rem 0.7rem; font-size: 1rem; cursor: pointer;
     }
-
     #thread-name { font-weight: 600; font-size: 1rem; }
     #thread-town { font-size: 0.78rem; opacity: 0.8; }
-
     #thread-actions { margin-left: auto; display: flex; gap: 0.5rem; }
 
-    #thread-letters {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-    }
+    #thread-letters { padding: 1rem; display: flex; flex-direction: column; gap: 0.85rem; }
 
     .letter-bubble {
-      background: #fff;
-      border-radius: 14px;
-      padding: 1rem 1.1rem;
-      box-shadow: var(--card-sh);
-      border: 1px solid var(--border);
+      background: #fff; border-radius: 14px; padding: 1rem 1.1rem;
+      box-shadow: var(--card-sh); border: 1px solid var(--border);
       border-left: 4px solid var(--border);
     }
-
     .letter-bubble.unread { border-left-color: var(--rust); }
     .letter-bubble.mine   { border-left-color: var(--sepia); background: var(--cream); }
 
-    .bubble-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.6rem;
-    }
-
+    .bubble-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
     .bubble-from { font-weight: 600; font-size: 0.82rem; color: var(--rust); }
     .bubble-from.mine-label { color: var(--sepia); }
     .bubble-time { font-size: 0.72rem; color: var(--muted); }
 
     .bubble-body {
-      font-family: 'Lora', serif;
-      font-size: 0.95rem;
-      line-height: 1.7;
-      color: var(--ink);
-      white-space: pre-wrap;
-      word-break: break-word;
+      font-family: 'Lora', serif; font-size: 0.95rem;
+      line-height: 1.7; color: var(--ink);
+      white-space: pre-wrap; word-break: break-word;
     }
-
     .bubble-body.collapsed {
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      display: -webkit-box; -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    .bubble-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 0.6rem;
-    }
-
-    .read-toggle {
-      font-size: 0.76rem;
-      color: var(--sepia);
-      cursor: pointer;
-      font-weight: 500;
-    }
-
+    .bubble-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem; }
+    .read-toggle { font-size: 0.76rem; color: var(--sepia); cursor: pointer; font-weight: 500; }
     .save-btn {
-      font-size: 0.76rem;
-      color: var(--muted);
-      cursor: pointer;
-      background: var(--paper);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.2rem 0.55rem;
+      font-size: 0.76rem; color: var(--muted); cursor: pointer;
+      background: var(--paper); border: 1px solid var(--border);
+      border-radius: 6px; padding: 0.2rem 0.55rem;
     }
 
-    /* Write area in thread */
     #thread-compose {
-      background: #fff;
-      border-bottom: 2px solid var(--border);
-      padding: 1rem;
+      background: #fff; border-bottom: 2px solid var(--border); padding: 1rem;
     }
-
-    #thread-compose textarea {
-      min-height: 100px;
-      resize: none;
-      margin-bottom: 0.4rem;
-    }
-
-    .compose-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
+    #thread-compose textarea { min-height: 100px; resize: none; margin-bottom: 0.4rem; }
+    .compose-footer { display: flex; justify-content: space-between; align-items: center; }
     #word-count { font-size: 0.78rem; color: var(--muted); }
     #word-count.over { color: #c0392b; font-weight: 600; }
+    #thread-send { width: auto; padding: 0.55rem 1.3rem; font-size: 0.9rem; }
 
-    #thread-send {
-      width: auto;
-      padding: 0.55rem 1.3rem;
-      font-size: 0.9rem;
-    }
-
-    /* ════════════════════════════════════════
-       WRITE PANEL (home tab fallback)
-    ════════════════════════════════════════ */
-    .hint-box {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.5rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-
-    /* ════════════════════════════════════════
-       ADMIN / GEAR PANEL
-    ════════════════════════════════════════ */
+    /* ADMIN SCREEN */
     #screen-admin {
-      display: none;
-      flex-direction: column;
-      min-height: 100vh;
-      background: var(--paper);
+      display: none; flex-direction: column;
+      min-height: 100vh; background: var(--paper);
     }
-
     #screen-admin.active { display: flex; }
 
     #admin-header {
-      background: #2c2016;
-      color: #fff;
+      background: #2c2016; color: #fff;
       padding: 0.9rem 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      display: flex; align-items: center; gap: 0.75rem;
+      position: sticky; top: 0; z-index: 100;
     }
-
     #admin-header h2 { font-size: 1rem; font-weight: 600; }
-
     #admin-body { padding: 1.1rem; display: flex; flex-direction: column; gap: 1rem; }
 
     .admin-slot {
-      background: #fff;
-      border-radius: 14px;
-      padding: 1rem 1.1rem;
-      border: 1px solid var(--border);
-      box-shadow: var(--card-sh);
+      background: #fff; border-radius: 14px; padding: 1rem 1.1rem;
+      border: 1px solid var(--border); box-shadow: var(--card-sh);
     }
-
-    .admin-slot-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.6rem;
-    }
-
+    .admin-slot-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem; }
     .admin-slot-name { font-weight: 600; font-size: 0.97rem; }
     .admin-slot-meta { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
     .admin-slot-warn { font-size: 0.75rem; color: var(--warn); margin-top: 0.2rem; }
     .admin-slot-empty { opacity: 0.45; font-style: italic; }
 
-    /* ════════════════════════════════════════
-       TOAST
-    ════════════════════════════════════════ */
+    /* TOAST */
     #toast {
-      position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
+      position: fixed; bottom: 1.5rem; left: 50%;
       transform: translateX(-50%) translateY(4rem);
-      background: #1a1208;
-      color: #fff;
-      padding: 0.65rem 1.3rem;
-      border-radius: 999px;
-      font-size: 0.88rem;
-      font-weight: 500;
-      z-index: 9999;
-      transition: transform 0.3s ease;
-      white-space: nowrap;
-      pointer-events: none;
+      background: #1a1208; color: #fff;
+      padding: 0.65rem 1.3rem; border-radius: 999px;
+      font-size: 0.88rem; font-weight: 500;
+      z-index: 9999; transition: transform 0.3s ease;
+      white-space: nowrap; pointer-events: none;
     }
-
     #toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* ════════════════════════════════════════
-       MODAL OVERLAY
-    ════════════════════════════════════════ */
+    /* MODAL */
     #modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(26,18,8,0.55);
-      z-index: 500;
-      align-items: flex-end;
-      justify-content: center;
+      display: none; position: fixed; inset: 0;
+      background: rgba(26,18,8,0.55); z-index: 500;
+      align-items: flex-end; justify-content: center;
     }
-
     #modal-overlay.active { display: flex; }
-
     .modal-sheet {
-      background: #fff;
-      border-radius: 20px 20px 0 0;
-      padding: 1.5rem 1.5rem 2rem;
-      width: 100%;
-      max-width: 480px;
+      background: #fff; border-radius: 20px 20px 0 0;
+      padding: 1.5rem 1.5rem 2rem; width: 100%; max-width: 480px;
     }
-
-    .modal-title {
-      font-family: 'Lora', serif;
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-      color: var(--ink);
-    }
-
+    .modal-title { font-family: 'Lora', serif; font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--ink); }
     .modal-body { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.25rem; }
     .modal-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    /* SETTINGS */
+    #settings-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(26,18,8,0.55); z-index: 600;
+      align-items: flex-end; justify-content: center;
+    }
+    #settings-overlay.active { display: flex; }
+    .settings-sheet {
+      background: #fff; border-radius: 20px 20px 0 0;
+      padding: 1.5rem 1.5rem 2rem; width: 100%; max-width: 480px;
+    }
+    .settings-title { font-family: 'Lora', serif; font-size: 1.1rem; margin-bottom: 1.25rem; color: var(--ink); }
+    .settings-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+      font-size: 0.9rem; color: var(--ink);
+    }
+    .settings-row:last-child { border-bottom: none; }
+    .settings-label { color: var(--muted); font-size: 0.78rem; margin-bottom: 0.2rem; }
+    .settings-value { font-family: 'Lora', serif; font-size: 1.05rem; color: var(--rust); font-weight: 600; letter-spacing: 0.04em; }
+
+    .auth-toggle { text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--muted); }
+    .auth-toggle a { color: var(--rust); cursor: pointer; text-decoration: underline; }
 
     .hidden { display: none !important; }
     .mt1 { margin-top: 1rem; }
     .mt05 { margin-top: 0.5rem; }
-
-    /* ════════════════════════════════════════
-       SETTINGS MODAL
-    ════════════════════════════════════════ */
-    #settings-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(26,18,8,0.55);
-      z-index: 600;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    #settings-overlay.active { display: flex; }
-    .settings-sheet {
-      background: #fff;
-      border-radius: 20px 20px 0 0;
-      padding: 1.5rem 1.5rem 2rem;
-      width: 100%;
-      max-width: 480px;
-    }
-    .settings-title {
-      font-family: 'Lora', serif;
-      font-size: 1.1rem;
-      margin-bottom: 1.25rem;
-      color: var(--ink);
-    }
-    .settings-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
-      color: var(--ink);
-    }
-    .settings-row:last-child { border-bottom: none; }
-    .settings-label { color: var(--muted); font-size: 0.78rem; margin-bottom: 0.2rem; }
-    .settings-value {
-      font-family: 'Lora', serif;
-      font-size: 1.05rem;
-      color: var(--rust);
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
-    .auth-toggle {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-    .auth-toggle a {
-      color: var(--rust);
-      cursor: pointer;
-      text-decoration: underline;
-    }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     AUTH SCREEN
-══════════════════════════════════════════ -->
+<!-- AUTH SCREEN -->
 <div id="screen-auth" class="screen">
   <div class="auth-brand">
     <span class="gurmukhi">ਚਿੱਠੀ</span>
@@ -681,8 +384,6 @@
     <div class="tagline">Letters for the ones you love</div>
   </div>
   <div class="auth-card">
-
-    <!-- SIGN IN FORM -->
     <div id="signin-form">
       <label class="field-label">Email</label>
       <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="email" />
@@ -696,8 +397,6 @@
       <div class="error-msg" id="auth-error"></div>
       <div class="auth-toggle">New here? <a id="show-signup">Create an account</a></div>
     </div>
-
-    <!-- SIGN UP FORM -->
     <div id="signup-form" class="hidden">
       <label class="field-label">Email</label>
       <input type="email" id="signup-email" placeholder="your@email.com" autocomplete="email" />
@@ -715,15 +414,11 @@
       <div class="error-msg" id="signup-error"></div>
       <div class="auth-toggle">Already have an account? <a id="show-signin">Sign in</a></div>
     </div>
-
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MAIN APP SCREEN
-══════════════════════════════════════════ -->
+<!-- MAIN APP SCREEN -->
 <div id="screen-app" class="screen">
-
   <div id="app-header">
     <div class="header-brand">
       <span class="g">ਚਿੱਠੀ</span>
@@ -731,7 +426,7 @@
       <span id="unread-badge" class="hidden">0</span>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" id="gear-btn" title="Admin">⚙️</button>
+      <button class="icon-btn" id="gear-btn" title="Settings">⚙️</button>
       <button class="icon-btn" id="refresh-btn" title="Refresh">↻</button>
       <button class="icon-btn" id="signout-btn" title="Sign out">↩</button>
     </div>
@@ -739,12 +434,11 @@
 
   <div id="tabs">
     <button class="tab active" data-tab="contacts">Contacts</button>
-    <button class="tab" data-tab="write">Write</button>
+    <button class="tab" data-tab="history">History</button>
   </div>
 
   <!-- CONTACTS PANEL -->
   <div id="contacts-panel" class="panel active">
-
     <div class="my-code-box">
       <div>
         <div class="label">Your Chithi code</div>
@@ -763,26 +457,21 @@
     </div>
 
     <div class="section-head">Your slots (10)</div>
-    <div class="slots-grid" id="slots-grid">
-      <!-- filled by JS -->
-    </div>
+    <div class="slots-grid" id="slots-grid"></div>
 
     <button class="btn btn-ghost mt1" id="leave-btn" style="font-size:0.85rem">Leave Chithi / Free my slot</button>
   </div>
 
-  <!-- WRITE PANEL (select a contact first) -->
-  <div id="write-panel" class="panel">
-    <div class="hint-box">
-      <div style="font-size:1.6rem;margin-bottom:0.5rem">✉️</div>
-      Go to <strong>Contacts</strong> and tap a contact to open your letter thread and write to them.
+  <!-- HISTORY PANEL -->
+  <div id="history-panel" class="panel">
+    <div class="section-head">Recent letters</div>
+    <div id="history-list">
+      <div style="color:var(--muted);font-size:0.88rem;padding:1rem 0">Loading history…</div>
     </div>
   </div>
-
 </div>
 
-<!-- ══════════════════════════════════════════
-     THREAD VIEW
-══════════════════════════════════════════ -->
+<!-- THREAD VIEW -->
 <div id="thread-view">
   <div id="thread-header">
     <button id="thread-back">←</button>
@@ -803,27 +492,19 @@
     </div>
   </div>
 
-  <div id="thread-letters">
-    <!-- letter bubbles injected here -->
-  </div>
+  <div id="thread-letters"></div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     ADMIN SCREEN
-══════════════════════════════════════════ -->
+<!-- ADMIN SCREEN -->
 <div id="screen-admin">
   <div id="admin-header">
     <button class="icon-btn" id="admin-back">←</button>
     <h2>⚙️ Postmaster Panel</h2>
   </div>
-  <div id="admin-body">
-    <!-- slot rows injected by JS -->
-  </div>
+  <div id="admin-body"></div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MODAL
-══════════════════════════════════════════ -->
+<!-- MODAL -->
 <div id="modal-overlay">
   <div class="modal-sheet">
     <div class="modal-title" id="modal-title">Confirm</div>
@@ -832,15 +513,11 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SETTINGS SHEET
-══════════════════════════════════════════ -->
+<!-- SETTINGS -->
 <div id="settings-overlay">
   <div class="settings-sheet">
     <div class="settings-title">⚙️ Settings</div>
-    <div id="settings-body">
-      <!-- injected by JS -->
-    </div>
+    <div id="settings-body"></div>
     <button class="btn btn-ghost mt1" id="settings-close">Close</button>
   </div>
 </div>
@@ -848,24 +525,14 @@
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- ══════════════════════════════════════════
-     FIREBASE + APP LOGIC
-══════════════════════════════════════════ -->
-<!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
+<!-- FIREBASE + APP LOGIC -->
 <script>
-  const CACHE_VERSION = "chithi-v16"; // real SVG icon file, no Chrome badge // natural flow: no sticky compose overlap // compose on top, badge scroll+flash, PWA manifest // newest-first, badge scroll, refresh button, auto-refresh // fixed: letters object/array confusion // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v17";
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(regs => {
-      regs.forEach(r => r.unregister());
-    });
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
   }
-  // Clear all caches matching old versions
   if ('caches' in window) {
-    caches.keys().then(keys => {
-      keys.forEach(key => {
-        if (key !== CACHE_VERSION) caches.delete(key);
-      });
-    });
+    caches.keys().then(keys => keys.forEach(key => { if (key !== CACHE_VERSION) caches.delete(key); }));
   }
 </script>
 
@@ -891,43 +558,36 @@ const FIREBASE_CONFIG = {
   appId:             "1:35477393410:web:a1c5aba77a7507fbf8571b"
 };
 
-// UID of the owner/admin (Kamaljit) — update after first login if needed
-// To find yours: after logging in open browser console and type: firebase.auth().currentUser.uid
-// Or just set your email here and we'll match by email
-const OWNER_EMAIL = "kamal310i@gmail.com";
-const INVITE_CODE = "CHITHI2025"; // change this anytime — share via WhatsApp
-
+const OWNER_EMAIL  = "kamal310i@gmail.com";
+const INVITE_CODE  = "CHITHI2025";
 const MAX_SLOTS    = 10;
-const MAX_LETTERS  = 10;   // per contact pair
+const MAX_LETTERS  = 10;
 const MAX_WORDS    = 500;
 const INACTIVITY_DAYS = 90;
 
-// ─────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────
 const app  = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db   = getDatabase(app);
 
-let ME = null; // { uid, email, code, displayName }
-let activeContactSlot = null; // slot index currently open in thread
+let ME = null;
+let activeContactSlot = null;
 
 // ─────────────────────────────────────────────
 // DOM REFS
 // ─────────────────────────────────────────────
-const screenAuth   = document.getElementById("screen-auth");
-const screenApp    = document.getElementById("screen-app");
-const threadView   = document.getElementById("thread-view");
-const screenAdmin  = document.getElementById("screen-admin");
+const screenAuth    = document.getElementById("screen-auth");
+const screenApp     = document.getElementById("screen-app");
+const threadView    = document.getElementById("thread-view");
+const screenAdmin   = document.getElementById("screen-admin");
 
-const authEmail    = document.getElementById("auth-email");
-const authPass     = document.getElementById("auth-pass");
-const loginBtn     = document.getElementById("login-btn");
-const authError    = document.getElementById("auth-error");
+const authEmail     = document.getElementById("auth-email");
+const authPass      = document.getElementById("auth-pass");
+const loginBtn      = document.getElementById("login-btn");
+const authError     = document.getElementById("auth-error");
 
-const unreadBadge  = document.getElementById("unread-badge");
-const gearBtn      = document.getElementById("gear-btn");
-const signoutBtn   = document.getElementById("signout-btn");
+const unreadBadge   = document.getElementById("unread-badge");
+const gearBtn       = document.getElementById("gear-btn");
+const signoutBtn    = document.getElementById("signout-btn");
 
 const myCodeDisplay = document.getElementById("my-code-display");
 const copyCodeBtn   = document.getElementById("copy-code-btn");
@@ -938,6 +598,8 @@ const addContactBtn = document.getElementById("add-contact-btn");
 const addError      = document.getElementById("add-error");
 const slotsGrid     = document.getElementById("slots-grid");
 const leaveBtn      = document.getElementById("leave-btn");
+
+const historyList   = document.getElementById("history-list");
 
 const threadBack    = document.getElementById("thread-back");
 const threadName    = document.getElementById("thread-name");
@@ -974,15 +636,21 @@ const toast         = document.getElementById("toast");
 // HELPERS
 // ─────────────────────────────────────────────
 function showScreen(name) {
-  // name: 'auth' | 'app' | 'thread' | 'admin'
   screenAuth.classList.remove("active");
   screenApp.classList.remove("active");
   threadView.classList.remove("active");
+
+  // fully hide admin
   screenAdmin.classList.remove("active");
-  if (name === "auth")   { screenAuth.classList.add("active"); }
-  if (name === "app")    { screenApp.classList.add("active"); }
-  if (name === "thread") { threadView.classList.add("active"); }
-  if (name === "admin")  { screenAdmin.classList.add("active"); }
+  screenAdmin.style.display = "";
+
+  if (name === "auth")   screenAuth.classList.add("active");
+  if (name === "app")    screenApp.classList.add("active");
+  if (name === "thread") threadView.classList.add("active");
+  if (name === "admin") {
+    screenAdmin.style.display = "flex";
+    screenAdmin.classList.add("active");
+  }
 }
 
 function showToast(msg, duration = 2500) {
@@ -992,7 +660,6 @@ function showToast(msg, duration = 2500) {
 }
 
 function showModal(title, body, buttons) {
-  // buttons: [{label, cls, action}]
   modalTitle.textContent = title;
   modalBody.textContent  = body;
   modalActions.innerHTML = "";
@@ -1029,7 +696,6 @@ function daysSince(ts) {
 }
 
 function generateCode(name) {
-  // FIRSTNAME-XXXX (first word of name, uppercase, max 10 chars, + 4 random digits)
   const base = (name || "USER").trim().split(/\s+/)[0].toUpperCase().replace(/[^A-Z]/g, "").slice(0, 10);
   const num  = Math.floor(1000 + Math.random() * 9000);
   return `${base}-${num}`;
@@ -1038,16 +704,7 @@ function generateCode(name) {
 // ─────────────────────────────────────────────
 // DB PATH HELPERS
 // ─────────────────────────────────────────────
-// /chithi/users/{uid}/profile   → { code, displayName, email, createdAt }
-// /chithi/users/{uid}/slots/{0..9} → { contactUid, contactName, contactTown, addedAt, lastActivity }
-// /chithi/letters/{uidA}/{uidB}/{letterId} → { from, fromName, body, ts, read }
-// uidA and uidB are always sorted alphabetically so each pair has one canonical path.
-// Two-level path lets Firebase rules check $uidA === auth.uid || $uidB === auth.uid natively.
-
-function sortedUids(uid1, uid2) {
-  return [uid1, uid2].sort(); // returns [smaller, larger]
-}
-
+function sortedUids(uid1, uid2) { return [uid1, uid2].sort(); }
 function userRef(uid)    { return ref(db, `chithi/users/${uid}`); }
 function profileRef(uid) { return ref(db, `chithi/users/${uid}/profile`); }
 function slotsRef(uid)   { return ref(db, `chithi/users/${uid}/slots`); }
@@ -1056,7 +713,6 @@ function lettersRef(uid1, uid2) {
   const [a, b] = sortedUids(uid1, uid2);
   return ref(db, `chithi/letters/${a}/${b}`);
 }
-// For direct letter node access (mark-read, delete)
 function letterNodeRef(uid1, uid2, letterId) {
   const [a, b] = sortedUids(uid1, uid2);
   return ref(db, `chithi/letters/${a}/${b}/${letterId}`);
@@ -1068,9 +724,7 @@ async function getProfile(uid) {
   return snap.exists() ? snap.val() : null;
 }
 
-async function getMySlots() {
-  return getSlotsOf(ME.uid);
-}
+async function getMySlots() { return getSlotsOf(ME.uid); }
 
 async function getSlotsOf(uid) {
   const snap = await get(slotsRef(uid));
@@ -1082,35 +736,17 @@ async function getSlotsOf(uid) {
 
 async function findCodeOwner(code) {
   const cleanCode = code.toUpperCase().trim();
-  console.log("[findCodeOwner] looking up:", cleanCode);
   try {
     const snap = await get(codeIndexRef(cleanCode));
-    if (!snap.exists()) {
-      console.warn("[findCodeOwner] no entry in /chithi/codes/ for:", cleanCode);
-      return null;
-    }
+    if (!snap.exists()) return null;
     const val = snap.val();
-    console.log("[findCodeOwner] raw value:", val, typeof val);
-
-    // Handle both formats: new = plain uid string, old = object with uid property
     let uid;
-    if (typeof val === "string") {
-      uid = val;
-    } else if (val && typeof val === "object" && typeof val.uid === "string") {
-      uid = val.uid;
-    } else {
-      console.warn("[findCodeOwner] unrecognised format:", val);
-      return null;
-    }
-
-    // Now fetch the profile using the resolved uid string
+    if (typeof val === "string") uid = val;
+    else if (val && typeof val === "object" && typeof val.uid === "string") uid = val.uid;
+    else return null;
     const profileSnap = await get(profileRef(uid));
-    if (!profileSnap.exists()) {
-      console.warn("[findCodeOwner] profile missing for uid:", uid);
-      return null;
-    }
+    if (!profileSnap.exists()) return null;
     return { uid, ...profileSnap.val() };
-
   } catch(e) {
     console.error("[findCodeOwner] error:", e.code, e.message);
     throw e;
@@ -1121,15 +757,10 @@ async function findCodeOwner(code) {
 // AUTH
 // ─────────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
-  if (!user) {
-    ME = null;
-    showScreen("auth");
-    return;
-  }
-  // load or create profile
+  if (!user) { ME = null; showScreen("auth"); return; }
+
   let profile = await getProfile(user.uid);
   if (!profile) {
-    // first login — create profile
     const NAME_MAP = {
       "kamal310i@gmail.com":  "Kamaljit Singh",
       "ksgill310i@gmail.com": "KS Gill"
@@ -1143,17 +774,10 @@ onAuthStateChanged(auth, async user => {
       createdAt:   Date.now()
     };
     await set(profileRef(user.uid), profile);
-    // Store uid string in public code index (simple string, no object format mismatch)
     await set(codeIndexRef(profile.code), user.uid);
   }
   ME = { uid: user.uid, email: user.email, ...profile };
-
-  // Always re-write code index on login — heals existing accounts that predate the index
-  try {
-    await set(codeIndexRef(ME.code), ME.uid);
-  } catch(e) {
-    console.warn("Could not write code index:", e.message);
-  }
+  try { await set(codeIndexRef(ME.code), ME.uid); } catch(e) {}
 
   myCodeDisplay.textContent = ME.code;
   showScreen("app");
@@ -1176,22 +800,15 @@ loginBtn.addEventListener("click", async () => {
 
 authPass.addEventListener("keydown", e => { if (e.key === "Enter") loginBtn.click(); });
 
-// ─────────────────────────────────────────────
-// SIGNUP TOGGLE
-// ─────────────────────────────────────────────
 document.getElementById("show-signup").addEventListener("click", () => {
   signinForm.classList.add("hidden");
   signupForm.classList.remove("hidden");
 });
-
 document.getElementById("show-signin").addEventListener("click", () => {
   signupForm.classList.add("hidden");
   signinForm.classList.remove("hidden");
 });
 
-// ─────────────────────────────────────────────
-// SIGN UP
-// ─────────────────────────────────────────────
 signupBtn.addEventListener("click", async () => {
   signupError.textContent = "";
   signupError.style.color = "";
@@ -1206,11 +823,9 @@ signupBtn.addEventListener("click", async () => {
   if (invite !== INVITE_CODE) { signupError.textContent = "Invite code is incorrect."; return; }
 
   signupBtn.disabled = true; signupBtn.textContent = "Creating…";
-  // Set name BEFORE createUser to avoid race condition with onAuthStateChanged
   window.__pendingDisplayName = name;
   try {
     await createUserWithEmailAndPassword(auth, email, pass);
-    // onAuthStateChanged fires next — profile created, then app screen loads
     signupError.style.color = "var(--success, #2e7d32)";
     signupError.textContent = "Account created! Welcome to Chithi 🎉";
   } catch(e) {
@@ -1245,10 +860,9 @@ document.getElementById("toggle-signup-pass").addEventListener("click", () => {
 signoutBtn.addEventListener("click", () => signOut(auth));
 
 // ─────────────────────────────────────────────
-// BADGE CLICK — scroll to first unread slot
+// BADGE CLICK
 // ─────────────────────────────────────────────
 unreadBadge.addEventListener("click", () => {
-  // Find first slot card containing an unread dot and scroll to it
   const allCards = slotsGrid.querySelectorAll(".slot-card");
   let found = null;
   for (const card of allCards) {
@@ -1256,7 +870,6 @@ unreadBadge.addEventListener("click", () => {
   }
   if (found) {
     found.scrollIntoView({ behavior: "smooth", block: "center" });
-    // Flash the card briefly to draw attention
     found.style.outline = "2px solid var(--rust)";
     setTimeout(() => found.style.outline = "", 1200);
   } else {
@@ -1265,25 +878,18 @@ unreadBadge.addEventListener("click", () => {
 });
 
 // ─────────────────────────────────────────────
-// REFRESH BUTTON
+// REFRESH
 // ─────────────────────────────────────────────
 const refreshBtn = document.getElementById("refresh-btn");
 refreshBtn.addEventListener("click", async () => {
-  refreshBtn.textContent = "⏳";
-  refreshBtn.disabled = true;
+  refreshBtn.textContent = "⏳"; refreshBtn.disabled = true;
   await renderSlots();
-  refreshBtn.textContent = "↻";
-  refreshBtn.disabled = false;
+  refreshBtn.textContent = "↻"; refreshBtn.disabled = false;
   showToast("Refreshed ✓");
 });
 
-// ─────────────────────────────────────────────
-// AUTO-REFRESH every 30s when app screen is visible
-// ─────────────────────────────────────────────
 setInterval(() => {
-  if (!screenApp.classList.contains("hidden") && ME) {
-    renderSlots();
-  }
+  if (screenApp.classList.contains("active") && ME) renderSlots();
 }, 30000);
 
 function friendlyAuthError(code) {
@@ -1304,7 +910,9 @@ document.querySelectorAll(".tab").forEach(tab => {
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
     document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
     tab.classList.add("active");
-    document.getElementById(tab.dataset.tab + "-panel").classList.add("active");
+    const panelId = tab.dataset.tab + "-panel";
+    document.getElementById(panelId).classList.add("active");
+    if (tab.dataset.tab === "history") renderHistory();
   });
 });
 
@@ -1330,7 +938,6 @@ addContactBtn.addEventListener("click", async () => {
   addContactBtn.disabled = true; addContactBtn.textContent = "Adding…";
 
   try {
-    // don't add yourself
     if (code === ME.code) {
       addError.textContent = "That's your own code!";
       addContactBtn.disabled = false; addContactBtn.textContent = "Add Contact";
@@ -1338,8 +945,6 @@ addContactBtn.addEventListener("click", async () => {
     }
 
     const slots = await getMySlots();
-
-    // check already added
     const alreadyIn = slots.some(s => s && s.contactCode === code);
     if (alreadyIn) {
       addError.textContent = "This person is already in your contacts.";
@@ -1347,7 +952,6 @@ addContactBtn.addEventListener("click", async () => {
       return;
     }
 
-    // find empty slot
     const emptyIdx = slots.findIndex(s => s === null);
     if (emptyIdx === -1) {
       addError.textContent = "All 10 slots are full. Free one first.";
@@ -1355,7 +959,6 @@ addContactBtn.addEventListener("click", async () => {
       return;
     }
 
-    // find code owner in DB
     const contact = await findCodeOwner(code);
     if (!contact) {
       addError.textContent = "No one found with that code.";
@@ -1363,7 +966,6 @@ addContactBtn.addEventListener("click", async () => {
       return;
     }
 
-    // check contact's slots for space (mutual linking requires a free slot on their side too)
     const theirSlots = await getSlotsOf(contact.uid);
     const alreadyHasMe = theirSlots.some(s => s && s.contactCode === ME.code);
     const theirEmptyIdx = theirSlots.findIndex(s => s === null);
@@ -1375,11 +977,6 @@ addContactBtn.addEventListener("click", async () => {
     }
 
     const now = Date.now();
-
-    // Build one atomic multi-path update — both slots written in a single round-trip
-    // If either write fails the whole operation fails cleanly
-    // Multi-path atomic update under /chithi (not root "/", which rules don't cover)
-    // Keys are relative to the ref passed to update()
     const atomicWrite = {
       [`users/${ME.uid}/slots/${emptyIdx}`]: {
         contactUid:   contact.uid,
@@ -1391,7 +988,6 @@ addContactBtn.addEventListener("click", async () => {
       }
     };
 
-    // Only write their slot if they don't already have me
     if (!alreadyHasMe) {
       atomicWrite[`users/${contact.uid}/slots/${theirEmptyIdx}`] = {
         contactUid:   ME.uid,
@@ -1403,19 +999,12 @@ addContactBtn.addEventListener("click", async () => {
       };
     }
 
-    // update() scoped to /chithi — paths above are relative to this ref
     await update(ref(db, "chithi"), atomicWrite);
-
-    addCodeInput.value = "";
-    addLabelInput.value = "";
-    addTownInput.value = "";
-    const mutualMsg = alreadyHasMe
-      ? `${label} added ✅`
-      : `${label} added ✅ — they can see you too`;
+    addCodeInput.value = ""; addLabelInput.value = ""; addTownInput.value = "";
+    const mutualMsg = alreadyHasMe ? `${label} added ✅` : `${label} added ✅ — they can see you too`;
     showToast(mutualMsg);
     renderSlots();
   } catch (e) {
-    console.error("[addContact] error:", e);
     addError.textContent = "Failed: " + (e.message || e.code || "unknown error");
   }
 
@@ -1443,7 +1032,6 @@ async function renderSlots() {
         </div>
         <div class="slot-number">${i + 1}</div>`;
     } else {
-      // check unread — try all possible letter paths
       let unread = 0;
       const seenIds = new Set();
       try {
@@ -1484,6 +1072,7 @@ async function renderSlots() {
         </div>
         <div class="slot-right">
           ${unread > 0 ? `<div class="unread-dot"></div>` : ""}
+          <button class="pen-btn" title="Open thread">✏️</button>
           <div class="slot-number">${i + 1}</div>
         </div>`;
 
@@ -1493,12 +1082,115 @@ async function renderSlots() {
     slotsGrid.appendChild(card);
   }
 
-  // update badge
   if (totalUnread > 0) {
     unreadBadge.textContent = totalUnread;
     unreadBadge.classList.remove("hidden");
   } else {
     unreadBadge.classList.add("hidden");
+  }
+}
+
+// ─────────────────────────────────────────────
+// RENDER HISTORY
+// ─────────────────────────────────────────────
+async function renderHistory() {
+  historyList.innerHTML = '<div style="color:var(--muted);font-size:0.88rem;padding:1rem 0">Loading…</div>';
+
+  try {
+    const slots = await getMySlots();
+    const occupied = slots.map((s, i) => s ? { ...s, slotIdx: i } : null).filter(Boolean);
+
+    if (occupied.length === 0) {
+      historyList.innerHTML = '<div style="color:var(--muted);font-size:0.88rem;padding:1rem 0">No contacts yet. Add one in the Contacts tab.</div>';
+      return;
+    }
+
+    // Gather recent letters from all contacts
+    const allLetters = [];
+
+    for (const slot of occupied) {
+      try {
+        const [pa, pb] = sortedUids(ME.uid, slot.contactUid);
+        const pathsToTry = [
+          `chithi/letters/${pa}/${pb}`,
+          `chithi/letters/${pa}_${pb}`,
+          `chithi/letters/${ME.uid}_${slot.contactUid}`,
+          `chithi/letters/${slot.contactUid}_${ME.uid}`
+        ];
+        const seenIds = new Set();
+        for (const path of pathsToTry) {
+          try {
+            const snap = await get(ref(db, path));
+            if (snap.exists()) {
+              snap.forEach(c => {
+                const v = c.val();
+                if (v && v.body && v.ts && !seenIds.has(c.key)) {
+                  seenIds.add(c.key);
+                  allLetters.push({
+                    id:          c.key,
+                    body:        v.body,
+                    ts:          v.ts,
+                    fromName:    v.fromName,
+                    from:        v.from,
+                    contactName: slot.contactName,
+                    contactTown: slot.contactTown || "",
+                    slot:        slot
+                  });
+                }
+              });
+            }
+          } catch(_) {}
+        }
+      } catch(_) {}
+    }
+
+    if (allLetters.length === 0) {
+      historyList.innerHTML = '<div style="color:var(--muted);font-size:0.88rem;padding:1rem 0">No letters yet. Open a contact and write the first one ✉️</div>';
+      return;
+    }
+
+    // Sort newest first, take top 5
+    allLetters.sort((a, b) => b.ts - a.ts);
+    const recent = allLetters.slice(0, 5);
+
+    historyList.innerHTML = "";
+    for (const letter of recent) {
+      const isMine = letter.from === ME.uid;
+      const card = document.createElement("div");
+      card.className = "history-card";
+
+      const top = document.createElement("div");
+      top.className = "history-card-top";
+
+      const contact = document.createElement("span");
+      contact.className = "history-contact";
+      contact.textContent = letter.contactName + (letter.contactTown ? ` · ${letter.contactTown}` : "");
+
+      const time = document.createElement("span");
+      time.className = "history-time";
+      time.textContent = formatDate(letter.ts);
+
+      top.appendChild(contact);
+      top.appendChild(time);
+
+      const from = document.createElement("div");
+      from.className = "history-from";
+      from.textContent = isMine ? "You wrote:" : `${letter.fromName} wrote:`;
+
+      const snippet = document.createElement("div");
+      snippet.className = "history-snippet";
+      snippet.textContent = letter.body;
+
+      card.appendChild(top);
+      card.appendChild(from);
+      card.appendChild(snippet);
+
+      card.addEventListener("click", () => openThread(letter.slot.slotIdx, letter.slot));
+      historyList.appendChild(card);
+    }
+
+  } catch(e) {
+    historyList.innerHTML = `<div style="color:#c0392b;font-size:0.85rem">Failed to load history: ${e.message}</div>`;
   }
 }
 
@@ -1521,11 +1213,8 @@ async function loadThreadLetters(slot) {
   threadTown.textContent = slot.contactTown || "";
   try {
     const [pa, pb] = sortedUids(ME.uid, slot.contactUid);
-    const letters = {};  // keyed by id to auto-dedup
+    const letters = {};
 
-    // Path A: new nested  chithi/letters/uidA/uidB
-    // Path B: old flat    chithi/letters/uidA_uidB
-    // Path C: very old flat with different sort order
     const pathsToTry = [
       `chithi/letters/${pa}/${pb}`,
       `chithi/letters/${pa}_${pb}`,
@@ -1539,17 +1228,14 @@ async function loadThreadLetters(slot) {
         if (snap.exists()) {
           snap.forEach(c => {
             const v = c.val();
-            // only store if it looks like a letter object
-            if (v && v.body && v.ts) {
-              letters[c.key] = { id: c.key, _path: path, ...v };
-            }
+            if (v && v.body && v.ts) letters[c.key] = { id: c.key, _path: path, ...v };
           });
         }
       } catch(_) {}
     }
 
     const letterList = Object.values(letters);
-    letterList.sort((a, b) => b.ts - a.ts); // newest first (top of feed)
+    letterList.sort((a, b) => b.ts - a.ts);
     threadLetters.innerHTML = "";
 
     if (letterList.length === 0) {
@@ -1557,7 +1243,6 @@ async function loadThreadLetters(slot) {
       return;
     }
 
-    // Mark all unread letters as read — fire-and-forget, don't block rendering
     letterList.forEach(letter => {
       if (!letter.read && letter.from !== ME.uid) {
         update(ref(db, `${letter._path}/${letter.id}`), { read: true }).catch(() => {});
@@ -1567,9 +1252,7 @@ async function loadThreadLetters(slot) {
 
     for (const letter of letterList) {
       const isMine   = letter.from === ME.uid;
-      const isUnread = !letter.read && !isMine;
 
-      // Build bubble purely with DOM methods — no innerHTML to avoid element wipe
       const bubble = document.createElement("div");
       bubble.className = `letter-bubble${isMine ? " mine" : ""}`;
 
@@ -1617,21 +1300,17 @@ async function loadThreadLetters(slot) {
       threadLetters.appendChild(bubble);
     }
 
-    // update lastActivity on my slot
     try {
       await update(slotRef(ME.uid, activeContactSlot.slotIdx), { lastActivity: Date.now() });
-    } catch(e) {
-      console.warn("[lastActivity update] failed:", e.code, e.message);
-    }
+    } catch(e) {}
 
   } catch(e) {
-    console.error("[loadThreadLetters] error:", e.code, e.message);
     threadLetters.innerHTML = `<div style="color:#c0392b;font-size:0.85rem;padding:0.5rem">Failed to load: ${e.message || e.code}</div>`;
   }
 }
 
 // ─────────────────────────────────────────────
-// SAVE / EXPORT LETTER
+// SAVE LETTER
 // ─────────────────────────────────────────────
 function saveLetter(letter, contactName) {
   const text = [
@@ -1646,7 +1325,7 @@ function saveLetter(letter, contactName) {
   const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement("a");
-  a.href     = url;
+  a.href = url;
   a.download = `chithi-${letter.fromName}-${new Date(letter.ts).toISOString().slice(0,10)}.txt`;
   a.click();
   URL.revokeObjectURL(url);
@@ -1672,12 +1351,10 @@ threadSend.addEventListener("click", async () => {
 
   try {
     const lRef   = lettersRef(ME.uid, activeContactSlot.contactUid);
-    // Get all letters client-side (max 10) — avoids needing a Firebase .indexOn rule
     const capSnap = await get(lRef);
     const existing = [];
     capSnap.forEach(c => existing.push({ id: c.key, ts: c.val().ts }));
 
-    // enforce cap: delete oldest if at limit
     if (existing.length >= MAX_LETTERS) {
       existing.sort((a, b) => a.ts - b.ts);
       const toDelete = existing.slice(0, existing.length - MAX_LETTERS + 1);
@@ -1694,7 +1371,6 @@ threadSend.addEventListener("click", async () => {
       read:      false
     });
 
-    // update lastActivity on my slot
     await update(slotRef(ME.uid, activeContactSlot.slotIdx), { lastActivity: Date.now() });
 
     composeBody.value = "";
@@ -1702,7 +1378,6 @@ threadSend.addEventListener("click", async () => {
     showToast("Letter sent ✉️");
     await loadThreadLetters(activeContactSlot);
   } catch(e) {
-    console.error("[send] full error:", e);
     showToast("Failed to send: " + (e.message || e.code || "unknown error"));
   }
 
@@ -1751,7 +1426,7 @@ async function exportAllLetters(slot) {
   const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement("a");
-  a.href     = url;
+  a.href = url;
   a.download = `chithi-history-${slot.contactName}.txt`;
   a.click();
   URL.revokeObjectURL(url);
@@ -1759,9 +1434,7 @@ async function exportAllLetters(slot) {
 
 async function confirmRemoveContact(slot) {
   try {
-    // delete letter history
     await remove(lettersRef(ME.uid, slot.contactUid));
-    // free slot
     await remove(slotRef(ME.uid, slot.slotIdx));
     showToast(`Slot ${slot.slotIdx + 1} freed ✅`);
     showScreen("app");
@@ -1772,7 +1445,7 @@ async function confirmRemoveContact(slot) {
 }
 
 // ─────────────────────────────────────────────
-// LEAVE CHITHI (remove myself)
+// LEAVE CHITHI
 // ─────────────────────────────────────────────
 leaveBtn.addEventListener("click", () => {
   showModal(
@@ -1787,12 +1460,10 @@ leaveBtn.addEventListener("click", () => {
 
 async function leavChithi() {
   try {
-    // delete all my letter threads
     const slots = await getMySlots();
     for (const s of slots) {
       if (s) await remove(lettersRef(ME.uid, s.contactUid));
     }
-    // delete my user node and code index
     await remove(codeIndexRef(ME.code));
     await remove(userRef(ME.uid));
     await signOut(auth);
@@ -1803,12 +1474,11 @@ async function leavChithi() {
 }
 
 // ─────────────────────────────────────────────
-// SETTINGS GEAR
+// SETTINGS GEAR — FIXED ADMIN LINK
 // ─────────────────────────────────────────────
 gearBtn.addEventListener("click", () => {
   settingsBody.innerHTML = "";
 
-  // My code row
   const codeRow = document.createElement("div");
   codeRow.className = "settings-row";
   codeRow.innerHTML = `
@@ -1822,7 +1492,6 @@ gearBtn.addEventListener("click", () => {
     navigator.clipboard.writeText(ME.code).then(() => showToast("Code copied!"));
   });
 
-  // Name row
   const nameRow = document.createElement("div");
   nameRow.className = "settings-row";
   nameRow.innerHTML = `
@@ -1833,7 +1502,6 @@ gearBtn.addEventListener("click", () => {
     </div>`;
   settingsBody.appendChild(nameRow);
 
-  // Invite code row — owner only
   if (ME.email === OWNER_EMAIL) {
     const inviteRow = document.createElement("div");
     inviteRow.className = "settings-row";
@@ -1848,14 +1516,21 @@ gearBtn.addEventListener("click", () => {
       navigator.clipboard.writeText(INVITE_CODE).then(() => showToast("Invite code copied!"));
     });
 
-    // Admin panel link — owner only
     const adminRow = document.createElement("div");
     adminRow.className = "settings-row";
     adminRow.innerHTML = `<div style="color:var(--rust);font-weight:500;cursor:pointer" id="settings-admin-link">⚙️ Open Postmaster Panel →</div>`;
     settingsBody.appendChild(adminRow);
+
     adminRow.querySelector("#settings-admin-link").addEventListener("click", () => {
+      // Close settings overlay first
       settingsOverlay.classList.remove("active");
-      showScreen("admin");
+      // Show admin screen explicitly
+      screenAuth.classList.remove("active");
+      screenApp.classList.remove("active");
+      threadView.classList.remove("active");
+      screenAdmin.classList.remove("active");
+      screenAdmin.style.display = "flex";
+      screenAdmin.classList.add("active");
       renderAdminPanel();
     });
   }
@@ -1868,11 +1543,19 @@ settingsOverlay.addEventListener("click", e => {
   if (e.target === settingsOverlay) settingsOverlay.classList.remove("active");
 });
 
+// ─────────────────────────────────────────────
+// ADMIN BACK — FIXED
+// ─────────────────────────────────────────────
 adminBack.addEventListener("click", () => {
+  screenAdmin.classList.remove("active");
+  screenAdmin.style.display = "";
   showScreen("app");
   renderSlots();
 });
 
+// ─────────────────────────────────────────────
+// ADMIN PANEL
+// ─────────────────────────────────────────────
 async function renderAdminPanel() {
   adminBody.innerHTML = '<div style="color:var(--muted);padding:1rem">Loading all slots…</div>';
 
@@ -1886,8 +1569,8 @@ async function renderAdminPanel() {
     adminBody.innerHTML = "";
 
     snap.forEach(userSnap => {
-      const uid     = userSnap.key;
-      const profile = userSnap.val().profile;
+      const uid      = userSnap.key;
+      const profile  = userSnap.val().profile;
       const slotsRaw = userSnap.val().slots || {};
 
       if (!profile) return;
