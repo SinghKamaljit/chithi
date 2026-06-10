@@ -853,7 +853,7 @@
 ══════════════════════════════════════════ -->
 <!-- Cache-busting: update VERSION string on every deploy to force fresh load -->
 <script>
-  const CACHE_VERSION = "chithi-v17"; // force-free: all paths + reverse slot removal // real SVG icon file, no Chrome badge // natural flow: no sticky compose overlap // compose on top, badge scroll+flash, PWA manifest // newest-first, badge scroll, refresh button, auto-refresh // fixed: letters object/array confusion // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
+  const CACHE_VERSION = "chithi-v18"; // admin panel: reads via codes index, no broad user read // force-free: all paths + reverse slot removal // real SVG icon file, no Chrome badge // natural flow: no sticky compose overlap // compose on top, badge scroll+flash, PWA manifest // newest-first, badge scroll, refresh button, auto-refresh // fixed: letters object/array confusion // complete path scan — tries all 4 letter paths // bumped: pure DOM bubble, non-blocking mark-read // bumped: reads both old flat and new nested letter paths // bumped: visible debug in thread view // bumped: full error surfacing for diagnosis // bumped: atomic update scoped to /chithi ref // bumped: rules validate constraint confirmed aligned
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(regs => {
       regs.forEach(r => r.unregister());
@@ -1877,18 +1877,50 @@ async function renderAdminPanel() {
   adminBody.innerHTML = '<div style="color:var(--muted);padding:1rem">Loading all slots…</div>';
 
   try {
-    const snap = await get(ref(db, "chithi/users"));
-    if (!snap.exists()) {
+    // Cannot read chithi/users wholesale — rules block parent reads.
+    // Instead: read chithi/codes to get all uid values, then fetch each profile+slots individually.
+    const codesSnap = await get(ref(db, "chithi/codes"));
+    if (!codesSnap.exists()) {
       adminBody.innerHTML = '<div style="color:var(--muted);padding:1rem">No users yet.</div>';
+      return;
+    }
+
+    // Collect unique UIDs from the codes index
+    const uidSet = new Set();
+    codesSnap.forEach(c => {
+      const val = c.val();
+      if (typeof val === "string") uidSet.add(val);
+      else if (val && typeof val.uid === "string") uidSet.add(val.uid);
+    });
+
+    // Fetch each user's profile + slots individually (rules allow this)
+    const users = [];
+    for (const uid of uidSet) {
+      try {
+        const [profileSnap, slotsSnap] = await Promise.all([
+          get(profileRef(uid)),
+          get(slotsRef(uid))
+        ]);
+        if (profileSnap.exists()) {
+          users.push({
+            uid,
+            profile:  profileSnap.val(),
+            slotsRaw: slotsSnap.exists() ? slotsSnap.val() : {}
+          });
+        }
+      } catch(e) {
+        console.warn("[admin] could not load uid:", uid, e.message);
+      }
+    }
+
+    if (users.length === 0) {
+      adminBody.innerHTML = '<div style="color:var(--muted);padding:1rem">No users found.</div>';
       return;
     }
 
     adminBody.innerHTML = "";
 
-    snap.forEach(userSnap => {
-      const uid     = userSnap.key;
-      const profile = userSnap.val().profile;
-      const slotsRaw = userSnap.val().slots || {};
+    users.forEach(({ uid, profile, slotsRaw }) => {
 
       if (!profile) return;
 
@@ -1992,7 +2024,8 @@ async function renderAdminPanel() {
     });
 
   } catch(e) {
-    adminBody.innerHTML = '<div style="color:#c0392b;padding:1rem">Failed to load admin data.</div>';
+    console.error("[renderAdminPanel]", e);
+    adminBody.innerHTML = `<div style="color:#c0392b;padding:1rem">Failed to load admin data: ${e.message || e.code}</div>`;
   }
 }
 
